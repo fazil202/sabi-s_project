@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Seating Plan Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 420px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 28px 24px 28px;
+        }
+        h1 {
+            text-align: center;
+            color: #2d3e50;
+            margin-bottom: 28px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 16px;
+            color: #34495e;
+            font-weight: 500;
+        }
+        input[type="file"], input[type="number"] {
+            margin-top: 6px;
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #dbe2ea;
+            border-radius: 5px;
+            background: #f8fafc;
+            font-size: 1rem;
+        }
+        input[type="checkbox"] {
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: #2d8cf0;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #1769aa;
+        }
+        ul {
+            margin-top: 20px;
+            padding-left: 18px;
+        }
+        li {
+            color: #e74c3c;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exam Seating Plan Generator</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <label>
+                Student CSV:
+                <input type="file" name="student_csv" required>
+            </label>
+            <label>
+                Room CSV:
+                <input type="file" name="room_csv" required>
+            </label>
+            <label>
+                Students per desk:
+                <input type="number" name="students_per_desk" value="1" min="1">
+            </label>
+            <label>
+                <input type="checkbox" name="include_detained">
+                Include detained students
+            </label>
+            <button type="submit">Process &amp; Display Seating Plan</button>
+        </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

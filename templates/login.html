@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Exam Seating Plan Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background: #f4f6fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .login-card {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            min-width: 320px;
+            text-align: center;
+        }
+        .login-card h1 {
+            margin-bottom: 1.5rem;
+            color: #2d3a4b;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        .login-card label {
+            display: block;
+            margin-bottom: 1rem;
+            color: #3a4a5d;
+            font-size: 1rem;
+            text-align: left;
+        }
+        .login-card input[type="text"],
+        .login-card input[type="password"] {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.3rem;
+            border: 1px solid #dbe2ea;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f7f9fc;
+            box-sizing: border-box;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 0.7rem;
+            background: #3a7afe;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        .login-card button:hover {
+            background: #2456c5;
+        }
+        .flash-messages {
+            margin-top: 1.2rem;
+            padding: 0.8rem;
+            background: #ffeaea;
+            color: #c0392b;
+            border-radius: 6px;
+            list-style: none;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>Login</h1>
+        <form method="POST" action="/login">
+            <label>Username:
+                <input type="text" name="username" required>
+            </label>
+            <label>Password:
+                <input type="password" name="password" required>
+            </label>
+            <button type="submit">Login</button>
+        </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
