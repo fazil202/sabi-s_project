@@ -5,38 +5,6 @@ from pdf_export import export_to_pdf
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-@app.route('/download_pdf', methods=['GET', 'POST'])
-def download_pdf():
-    if not is_logged_in():
-        return redirect(url_for('login'))
-    # Recreate seating plan from last upload (or store in session for production)
-    # For demo, just use last processed seating_plan
-    # You may want to store seating_plan in session for real use
-    # Here, we assume seating_plan is passed from the form or session
-    # For now, reprocess with last uploaded files
-    upload_folder = 'uploads'
-    student_csv = None
-    room_csv = None
-    for file in os.listdir(upload_folder):
-        if file.endswith('.csv') and 'student' in file:
-            student_csv = os.path.join(upload_folder, file)
-        if file.endswith('.csv') and 'room' in file:
-            room_csv = os.path.join(upload_folder, file)
-    if not student_csv or not room_csv:
-        flash('CSV files not found for PDF export.')
-        return redirect(url_for('index'))
-    students_per_desk = 1
-    include_detained = False
-    from seating import generate_seating_plan
-    seating_plan, error = generate_seating_plan(student_csv, room_csv, students_per_desk, include_detained)
-    if error:
-        flash(error)
-        return redirect(url_for('index'))
-    pdf_path = export_to_pdf(seating_plan)
-    return send_file(pdf_path, as_attachment=True)
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-
 def is_logged_in():
     return session.get('logged_in', False)
 
@@ -86,6 +54,50 @@ def index():
             return redirect(url_for('index'))
         return render_template('seating_plan.html', seating_plan=seating_plan)
     return render_template('index.html')
+
+@app.route('/download_pdf', methods=['GET', 'POST'])
+def download_pdf():
+    if not is_logged_in():
+        return redirect(url_for('login'))
+    
+    # Get the last uploaded files from uploads folder
+    upload_folder = 'uploads'
+    student_csv = None
+    room_csv = None
+    
+    if not os.path.exists(upload_folder):
+        flash('No files found for PDF export. Please upload CSV files first.')
+        return redirect(url_for('index'))
+    
+    # Find the most recent student and room CSV files
+    for file in os.listdir(upload_folder):
+        if file.endswith('.csv'):
+            if 'student' in file.lower():
+                student_csv = os.path.join(upload_folder, file)
+            elif 'room' in file.lower():
+                room_csv = os.path.join(upload_folder, file)
+    
+    if not student_csv or not room_csv:
+        flash('CSV files not found for PDF export. Please upload both student and room CSV files.')
+        return redirect(url_for('index'))
+    
+    # Generate seating plan with default parameters
+    students_per_desk = 1
+    include_detained = False
+    
+    from seating import generate_seating_plan
+    seating_plan, error = generate_seating_plan(student_csv, room_csv, students_per_desk, include_detained)
+    
+    if error:
+        flash(f'Error generating seating plan: {error}')
+        return redirect(url_for('index'))
+    
+    try:
+        pdf_path = export_to_pdf(seating_plan)
+        return send_file(pdf_path, as_attachment=True, download_name='seating_plan.pdf')
+    except Exception as e:
+        flash(f'Error generating PDF: {str(e)}')
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     # Change host to your desired IP, e.g., '0.0.0.0' for all interfaces or your LAN IP
