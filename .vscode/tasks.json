@@ -6,7 +6,7 @@
 			"type": "shell",
 			"command": "D:/Development/Sheerin/Sabi's Project/seating_arrangements/.venv/Scripts/python.exe",
 			"args": [
-				"app.py"
+				"backend/app.py"
 			],
 			"isBackground": false,
 			"problemMatcher": [],

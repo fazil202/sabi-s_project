@@ -1,4 +1,0 @@
-room_number,rows,columns,capacity,allowed_branches
-A101,4,4,16,"CS, ME"
-B202,4,4,16,"DS,EC"
-C303,4,4,16,"CS,EE,EC"

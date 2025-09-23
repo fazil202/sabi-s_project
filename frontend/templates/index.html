@@ -79,8 +79,50 @@
     </style>
   </head>
   <body>
+    <div
+      style="
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+      "
+    >
+      <a
+        href="{{ url_for('pdf_history') }}"
+        style="
+          background: #17a2b8;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 6px;
+          text-decoration: none;
+          font-size: 0.9rem;
+        "
+      >
+        📄 PDF History
+      </a>
+      <a
+        href="{{ url_for('logout') }}"
+        style="
+          background: #dc3545;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 6px;
+          text-decoration: none;
+          font-size: 0.9rem;
+        "
+      >
+        Logout
+      </a>
+    </div>
+
     <div class="container">
       <h1>Exam Seating Plan Generator</h1>
+      {% if session.get('user_id') %}
+      <p style="text-align: center; color: #6c757d; margin-bottom: 20px">
+        Welcome, {{ session.get('full_name', 'User') }}!
+      </p>
+      {% endif %}
       <form method="POST" enctype="multipart/form-data">
         <label>
           Student CSV:

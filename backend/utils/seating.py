@@ -43,11 +43,21 @@ def generate_seating_plan(student_csv, room_csv, students_per_desk, include_deta
                         continue
                     student = student_queue.popleft()
                     conflict = False
-                    if prev_row and c < len(prev_row):
-                        if prev_row[c]['Branch'] == student['Branch']:
+                    
+                    # Convert pandas row to dictionary for easier handling
+                    student_dict = {
+                        'roll_number': student.get('Roll Number', student.get('roll_number', 'N/A')),
+                        'name': student.get('Name', student.get('name', 'Unknown')),
+                        'branch': student.get('Branch', student.get('branch', 'N/A'))
+                    }
+                    
+                    # Check for conflicts
+                    if prev_row and c < len(prev_row) and prev_row[c] is not None:
+                        if prev_row[c]['branch'] == student_dict['branch']:
                             conflict = True
-                    if row_seats and row_seats[-1]['Branch'] == student['Branch']:
+                    if row_seats and row_seats[-1] is not None and row_seats[-1]['branch'] == student_dict['branch']:
                         conflict = True
+                    
                     if conflict:
                         student_queue.append(student)
                         attempts += 1
@@ -55,7 +65,8 @@ def generate_seating_plan(student_csv, room_csv, students_per_desk, include_deta
                             print('Max attempts reached, cannot satisfy constraints.')
                             return None, 'Unable to satisfy seating constraints. Please check your data.'
                         continue
-                    row_seats.append(student)
+                        
+                    row_seats.append(student_dict)
                     c += 1
                     attempts = 0
                 room_seats.append(row_seats)
