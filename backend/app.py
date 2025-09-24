@@ -430,7 +430,7 @@ def generate_plan():
             print(f"Imported {inserted} students from CSV into the database.")
         
         from backend.utils.seating import generate_seating_plan
-        seating_plan, error = generate_seating_plan(student_path, room_path, students_per_desk, include_detained)
+        seating_plan, unseated_students, error = generate_seating_plan(student_path, room_path, students_per_desk, include_detained)
         
         if error:
             flash(error)
@@ -448,7 +448,7 @@ def generate_plan():
             db.log_activity(user_id, 'SEATING_PLAN_GENERATED', 
                           f"Generated seating plan with {student_count} students in {room_count} rooms")
         
-        return render_template('seating plan/seating_plan.html', seating_plan=seating_plan, building=building)
+        return render_template('seating plan/seating_plan.html', seating_plan=seating_plan, unseated_students=unseated_students, building=building)
     
     # Get default settings
     default_settings = {}
@@ -478,7 +478,7 @@ def download_pdf():
         return redirect(url_for('generate_plan'))
     
     from backend.utils.seating import generate_seating_plan
-    seating_plan, error = generate_seating_plan(student_csv, room_csv, students_per_desk, include_detained)
+    seating_plan, unseated_students, error = generate_seating_plan(student_csv, room_csv, students_per_desk, include_detained)
     
     if error:
         flash(f'Error generating seating plan: {error}')

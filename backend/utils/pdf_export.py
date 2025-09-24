@@ -25,17 +25,17 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
             table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
             td { 
                 border: 2px solid #ddd; 
-                padding: 8px; 
+                padding: 6px; 
                 text-align: center; 
                 vertical-align: middle;
-                min-width: 120px;
-                min-height: 60px;
+                min-width: 130px;
+                min-height: 70px;
             }
-            .student { background-color: #f8f9fa; font-size: 10px; line-height: 1.2; }
-            .empty { background-color: #e9ecef; color: #6c757d; }
-            .roll { font-weight: bold; color: #2d3a4b; }
-            .name { color: #495057; }
-            .branch { color: #6c757d; font-size: 9px; }
+            .student { background-color: #f8f9fa; font-size: 9px; line-height: 1.1; }
+            .empty { background-color: #e9ecef; color: #6c757d; font-size: 10px; }
+            .roll { font-weight: bold; color: #2d3a4b; font-size: 10px; }
+            .name { color: #495057; font-size: 9px; }
+            .branch { color: #6c757d; font-size: 8px; }
         </style>
     </head>
     <body>
@@ -48,25 +48,41 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
         
         for row in room['seats']:
             html += '<tr>'
-            for student in row:
-                if student is not None:
-                    # Handle both dictionary and pandas Series formats
-                    if hasattr(student, 'get'):  # Dictionary
-                        roll_number = student.get('roll_number', student.get('Roll Number', 'N/A'))
-                        name = student.get('name', student.get('Name', 'Unknown'))
-                        branch = student.get('branch', student.get('Branch', 'N/A'))
-                    else:  # Pandas Series or other object
-                        roll_number = getattr(student, 'roll_number', getattr(student, 'Roll Number', 'N/A'))
-                        name = getattr(student, 'name', getattr(student, 'Name', 'Unknown'))
-                        branch = getattr(student, 'branch', getattr(student, 'Branch', 'N/A'))
-                    
-                    html += f'''
-                    <td class="student">
-                        <div class="roll">{roll_number}</div>
-                        <div class="name">{name}</div>
-                        <div class="branch">{branch}</div>
-                    </td>
-                    '''
+            for desk in row:
+                if desk is not None:
+                    # Check if desk contains multiple students (list) or single student (dict)
+                    if isinstance(desk, list):
+                        # Multiple students per desk
+                        html += '<td class="student">'
+                        for i, student in enumerate(desk):
+                            if i > 0:
+                                html += '<hr style="margin: 2px 0; border: 0.5px solid #ccc;">'
+                            
+                            roll_number = student.get('roll_number', 'N/A')
+                            name = student.get('name', 'Unknown')
+                            branch = student.get('branch', 'N/A')
+                            
+                            html += f'''
+                            <div style="margin-bottom: 2px;">
+                                <div class="roll">{roll_number}</div>
+                                <div class="name">{name}</div>
+                                <div class="branch">{branch}</div>
+                            </div>
+                            '''
+                        html += '</td>'
+                    else:
+                        # Single student per desk
+                        roll_number = desk.get('roll_number', 'N/A')
+                        name = desk.get('name', 'Unknown')
+                        branch = desk.get('branch', 'N/A')
+                        
+                        html += f'''
+                        <td class="student">
+                            <div class="roll">{roll_number}</div>
+                            <div class="name">{name}</div>
+                            <div class="branch">{branch}</div>
+                        </td>
+                        '''
                 else:
                     html += '<td class="empty">Empty</td>'
             html += '</tr>'

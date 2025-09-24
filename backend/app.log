@@ -63,3 +63,339 @@
 2025-09-24 11:57:12,330 - INFO - 127.0.0.1 - - [24/Sep/2025 11:57:12] "GET /signup HTTP/1.1" 200 -
 2025-09-24 11:57:12,635 - INFO - 127.0.0.1 - - [24/Sep/2025 11:57:12] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
 2025-09-24 11:57:12,667 - INFO - 127.0.0.1 - - [24/Sep/2025 11:57:12] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 17:56:46,160 - INFO - package: mysql.connector.plugins
+2025-09-24 17:56:46,161 - INFO - plugin_name: mysql_native_password
+2025-09-24 17:56:46,162 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 17:56:46,285 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.24.32.111:5000
+2025-09-24 17:56:46,286 - INFO - [33mPress CTRL+C to quit[0m
+2025-09-24 17:56:46,287 - INFO -  * Restarting with stat
+2025-09-24 17:56:48,713 - INFO - package: mysql.connector.plugins
+2025-09-24 17:56:48,713 - INFO - plugin_name: mysql_native_password
+2025-09-24 17:56:48,715 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 17:56:48,757 - WARNING -  * Debugger is active!
+2025-09-24 17:56:48,768 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 17:57:00,373 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:00] "GET /login HTTP/1.1" 200 -
+2025-09-24 17:57:00,627 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:00] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 17:57:00,635 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:00] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:57:04,440 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:04] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-24 17:57:04,451 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:04] "GET /login HTTP/1.1" 200 -
+2025-09-24 17:57:04,514 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:57:04,903 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:04] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 17:57:08,268 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:08] "GET /signup HTTP/1.1" 200 -
+2025-09-24 17:57:08,571 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:08] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:57:08,634 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:08] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 17:57:48,755 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:48] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-24 17:57:48,764 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:48] "GET /signup HTTP/1.1" 200 -
+2025-09-24 17:57:49,018 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:49] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 17:57:49,142 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:57:56,440 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:56] "GET /login HTTP/1.1" 200 -
+2025-09-24 17:57:56,537 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:57:56,704 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:56] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 17:57:58,549 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:58] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-24 17:57:58,557 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:58] "GET /login HTTP/1.1" 200 -
+2025-09-24 17:57:58,936 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:57:58,950 - INFO - 127.0.0.1 - - [24/Sep/2025 17:57:58] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 17:58:04,459 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:04] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-24 17:58:04,468 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:04] "GET /login HTTP/1.1" 200 -
+2025-09-24 17:58:04,879 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:58:04,940 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:04] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 17:58:14,135 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:14] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-24 17:58:14,147 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:14] "GET /login HTTP/1.1" 200 -
+2025-09-24 17:58:14,547 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:58:14,580 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:14] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 17:58:16,479 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:16] "GET /signup HTTP/1.1" 200 -
+2025-09-24 17:58:16,789 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:16] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:58:16,853 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:16] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 17:58:42,605 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:42] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-24 17:58:42,614 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:42] "GET /signup HTTP/1.1" 200 -
+2025-09-24 17:58:42,831 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:58:43,018 - INFO - 127.0.0.1 - - [24/Sep/2025 17:58:43] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 17:59:41,581 - INFO - 127.0.0.1 - - [24/Sep/2025 17:59:41] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-24 17:59:41,593 - INFO - 127.0.0.1 - - [24/Sep/2025 17:59:41] "GET /signup HTTP/1.1" 200 -
+2025-09-24 17:59:41,845 - INFO - 127.0.0.1 - - [24/Sep/2025 17:59:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 17:59:41,954 - INFO - 127.0.0.1 - - [24/Sep/2025 17:59:41] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 18:00:11,244 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:11] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-24 18:00:11,257 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:11] "GET /signup HTTP/1.1" 200 -
+2025-09-24 18:00:11,509 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:00:11,615 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:11] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 18:00:44,846 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:44] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-24 18:00:44,853 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:44] "GET /signup HTTP/1.1" 200 -
+2025-09-24 18:00:45,111 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:00:45,204 - INFO - 127.0.0.1 - - [24/Sep/2025 18:00:45] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 18:01:07,792 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:07] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-24 18:01:07,800 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:07] "GET /login HTTP/1.1" 200 -
+2025-09-24 18:01:07,892 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:07] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:01:08,235 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:08] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 18:01:14,196 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:14] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-24 18:01:14,232 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:14] "GET /dashboard HTTP/1.1" 200 -
+2025-09-24 18:01:14,645 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:14] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-24 18:01:21,715 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:21] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:01:21,979 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:21] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:01:22,077 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:01:45,049 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:45] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:01:45,091 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:45] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:01:45,095 - INFO - 127.0.0.1 - - [24/Sep/2025 18:01:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:03:30,887 - INFO - 127.0.0.1 - - [24/Sep/2025 18:03:30] "[32mPOST /send_email_notifications HTTP/1.1[0m" 302 -
+2025-09-24 18:03:30,919 - INFO - 127.0.0.1 - - [24/Sep/2025 18:03:30] "GET /pdf_history HTTP/1.1" 200 -
+2025-09-24 18:03:31,146 - INFO - 127.0.0.1 - - [24/Sep/2025 18:03:31] "[33mGET /static/pdf%20history/pdf_history.css HTTP/1.1[0m" 404 -
+2025-09-24 18:03:35,003 - INFO - 127.0.0.1 - - [24/Sep/2025 18:03:35] "GET /dashboard HTTP/1.1" 200 -
+2025-09-24 18:03:35,194 - INFO - 127.0.0.1 - - [24/Sep/2025 18:03:35] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-24 18:04:05,036 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\seating.py', reloading
+2025-09-24 18:04:05,576 - INFO -  * Restarting with stat
+2025-09-24 18:04:08,103 - INFO - package: mysql.connector.plugins
+2025-09-24 18:04:08,103 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:04:08,104 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:04:08,489 - WARNING -  * Debugger is active!
+2025-09-24 18:04:08,502 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:04:09,069 - INFO - 127.0.0.1 - - [24/Sep/2025 18:04:09] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-24 18:04:09,071 - INFO - 127.0.0.1 - - [24/Sep/2025 18:04:09] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 18:04:15,881 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\app.py', reloading
+2025-09-24 18:04:16,164 - INFO -  * Restarting with stat
+2025-09-24 18:04:18,424 - INFO - package: mysql.connector.plugins
+2025-09-24 18:04:18,425 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:04:18,426 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:04:18,475 - WARNING -  * Debugger is active!
+2025-09-24 18:04:18,488 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:04:22,989 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\app.py', reloading
+2025-09-24 18:04:23,176 - INFO -  * Restarting with stat
+2025-09-24 18:04:25,394 - INFO - package: mysql.connector.plugins
+2025-09-24 18:04:25,394 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:04:25,396 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:04:25,428 - WARNING -  * Debugger is active!
+2025-09-24 18:04:25,437 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:04:34,573 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\app.py', reloading
+2025-09-24 18:04:34,856 - INFO -  * Restarting with stat
+2025-09-24 18:04:36,995 - INFO - package: mysql.connector.plugins
+2025-09-24 18:04:36,996 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:04:36,997 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:04:37,029 - WARNING -  * Debugger is active!
+2025-09-24 18:04:37,038 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:13:21,249 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\app.py', reloading
+2025-09-24 18:13:21,464 - INFO -  * Restarting with stat
+2025-09-24 18:13:24,067 - INFO - package: mysql.connector.plugins
+2025-09-24 18:13:24,067 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:13:24,069 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:13:24,118 - WARNING -  * Debugger is active!
+2025-09-24 18:13:24,132 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:13:27,111 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:27] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:13:27,338 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:27] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:13:27,468 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:13:27,495 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:27] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 18:13:40,004 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:40] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:13:40,062 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:40] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 18:13:40,371 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:13:40,378 - INFO - 127.0.0.1 - - [24/Sep/2025 18:13:40] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:14:03,798 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:03] "[32mPOST /send_email_notifications HTTP/1.1[0m" 302 -
+2025-09-24 18:14:03,827 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:03] "GET /pdf_history HTTP/1.1" 200 -
+2025-09-24 18:14:04,047 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:04] "[33mGET /static/pdf%20history/pdf_history.css HTTP/1.1[0m" 404 -
+2025-09-24 18:14:07,087 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:07] "GET /dashboard HTTP/1.1" 200 -
+2025-09-24 18:14:07,200 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:07] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-24 18:14:13,219 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:13] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:14:13,523 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:14:13,569 - INFO - 127.0.0.1 - - [24/Sep/2025 18:14:13] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:15:11,429 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\seating.py', reloading
+2025-09-24 18:15:11,664 - INFO -  * Restarting with stat
+2025-09-24 18:15:13,767 - INFO - package: mysql.connector.plugins
+2025-09-24 18:15:13,768 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:15:13,769 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:15:13,806 - WARNING -  * Debugger is active!
+2025-09-24 18:15:13,818 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:16:43,346 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\pdf_export.py', reloading
+2025-09-24 18:16:43,560 - INFO -  * Restarting with stat
+2025-09-24 18:16:45,714 - INFO - package: mysql.connector.plugins
+2025-09-24 18:16:45,714 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:16:45,715 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:16:45,748 - WARNING -  * Debugger is active!
+2025-09-24 18:16:45,763 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:17:02,312 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\pdf_export.py', reloading
+2025-09-24 18:17:02,461 - INFO -  * Restarting with stat
+2025-09-24 18:17:04,628 - INFO - package: mysql.connector.plugins
+2025-09-24 18:17:04,629 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:17:04,630 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:17:04,666 - WARNING -  * Debugger is active!
+2025-09-24 18:17:04,675 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:17:23,607 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\seating.py', reloading
+2025-09-24 18:17:23,819 - INFO -  * Restarting with stat
+2025-09-24 18:17:26,094 - INFO - package: mysql.connector.plugins
+2025-09-24 18:17:26,094 - INFO - plugin_name: mysql_native_password
+2025-09-24 18:17:26,096 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 18:17:26,130 - WARNING -  * Debugger is active!
+2025-09-24 18:17:26,141 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 18:17:36,361 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:36] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:17:36,598 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:36] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:17:36,693 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:36] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:17:48,163 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:48] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:17:48,210 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:17:48,211 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:48] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:17:56,570 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:56] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:17:56,612 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:17:56,831 - INFO - 127.0.0.1 - - [24/Sep/2025 18:17:56] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:18:06,984 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:06] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:18:07,032 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:07] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:18:07,033 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:07] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:18:19,629 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:19] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:18:23,747 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:23] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:18:23,812 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:23] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:18:24,130 - INFO - 127.0.0.1 - - [24/Sep/2025 18:18:24] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:46:57,413 - INFO - 127.0.0.1 - - [24/Sep/2025 18:46:57] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:47:01,436 - INFO - 127.0.0.1 - - [24/Sep/2025 18:47:01] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:47:01,522 - INFO - 127.0.0.1 - - [24/Sep/2025 18:47:01] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:47:01,877 - INFO - 127.0.0.1 - - [24/Sep/2025 18:47:01] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:49:31,098 - INFO - 127.0.0.1 - - [24/Sep/2025 18:49:31] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:49:31,153 - INFO - 127.0.0.1 - - [24/Sep/2025 18:49:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:49:31,348 - INFO - 127.0.0.1 - - [24/Sep/2025 18:49:31] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:49:41,439 - INFO - 127.0.0.1 - - [24/Sep/2025 18:49:41] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:49:41,493 - INFO - 127.0.0.1 - - [24/Sep/2025 18:49:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:49:41,518 - INFO - 127.0.0.1 - - [24/Sep/2025 18:49:41] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:50:40,119 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:40] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:50:40,155 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:50:40,371 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:40] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:50:55,411 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:55] "[32mPOST /generate_plan HTTP/1.1[0m" 302 -
+2025-09-24 18:50:55,424 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:55] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:50:55,527 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:55] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:50:55,878 - INFO - 127.0.0.1 - - [24/Sep/2025 18:50:55] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:51:10,761 - INFO - 127.0.0.1 - - [24/Sep/2025 18:51:10] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:51:10,855 - INFO - 127.0.0.1 - - [24/Sep/2025 18:51:10] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:51:11,186 - INFO - 127.0.0.1 - - [24/Sep/2025 18:51:11] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:52:11,034 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:11] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:52:11,072 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:52:11,282 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:11] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:52:28,312 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:28] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:52:28,363 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:28] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:52:28,364 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:52:40,155 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:40] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:52:40,156 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:52:40,161 - INFO - 127.0.0.1 - - [24/Sep/2025 18:52:40] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 18:53:13,054 - INFO - 127.0.0.1 - - [24/Sep/2025 18:53:13] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:53:13,360 - INFO - 127.0.0.1 - - [24/Sep/2025 18:53:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:53:13,421 - INFO - 127.0.0.1 - - [24/Sep/2025 18:53:13] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:53:22,811 - INFO - 127.0.0.1 - - [24/Sep/2025 18:53:22] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:53:22,850 - INFO - 127.0.0.1 - - [24/Sep/2025 18:53:22] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:53:22,851 - INFO - 127.0.0.1 - - [24/Sep/2025 18:53:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:54:27,757 - INFO - 127.0.0.1 - - [24/Sep/2025 18:54:27] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:54:27,793 - INFO - 127.0.0.1 - - [24/Sep/2025 18:54:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:54:28,014 - INFO - 127.0.0.1 - - [24/Sep/2025 18:54:28] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:54:42,636 - INFO - 127.0.0.1 - - [24/Sep/2025 18:54:42] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:54:42,677 - INFO - 127.0.0.1 - - [24/Sep/2025 18:54:42] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:54:42,679 - INFO - 127.0.0.1 - - [24/Sep/2025 18:54:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:55:13,977 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:13] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:55:14,024 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:55:14,231 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:14] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:55:24,221 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:24] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:55:24,307 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:24] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:55:24,346 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:24] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:55:49,830 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:49] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:55:49,887 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:55:49,895 - INFO - 127.0.0.1 - - [24/Sep/2025 18:55:49] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:56:15,783 - INFO - 127.0.0.1 - - [24/Sep/2025 18:56:15] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:56:15,824 - INFO - 127.0.0.1 - - [24/Sep/2025 18:56:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:56:15,926 - INFO - 127.0.0.1 - - [24/Sep/2025 18:56:15] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:57:27,461 - INFO - 127.0.0.1 - - [24/Sep/2025 18:57:27] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:57:27,497 - INFO - 127.0.0.1 - - [24/Sep/2025 18:57:27] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:57:27,500 - INFO - 127.0.0.1 - - [24/Sep/2025 18:57:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:57:51,159 - INFO - 127.0.0.1 - - [24/Sep/2025 18:57:51] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:57:51,205 - INFO - 127.0.0.1 - - [24/Sep/2025 18:57:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:57:51,211 - INFO - 127.0.0.1 - - [24/Sep/2025 18:57:51] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:58:20,328 - INFO - 127.0.0.1 - - [24/Sep/2025 18:58:20] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:58:20,361 - INFO - 127.0.0.1 - - [24/Sep/2025 18:58:20] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:58:20,484 - INFO - 127.0.0.1 - - [24/Sep/2025 18:58:20] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:58:51,529 - INFO - 127.0.0.1 - - [24/Sep/2025 18:58:51] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:58:51,552 - INFO - 127.0.0.1 - - [24/Sep/2025 18:58:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:58:51,728 - INFO - 127.0.0.1 - - [24/Sep/2025 18:58:51] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:59:26,016 - INFO - 127.0.0.1 - - [24/Sep/2025 18:59:26] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:59:26,057 - INFO - 127.0.0.1 - - [24/Sep/2025 18:59:26] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 18:59:26,057 - INFO - 127.0.0.1 - - [24/Sep/2025 18:59:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:59:59,590 - INFO - 127.0.0.1 - - [24/Sep/2025 18:59:59] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 18:59:59,645 - INFO - 127.0.0.1 - - [24/Sep/2025 18:59:59] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 18:59:59,732 - INFO - 127.0.0.1 - - [24/Sep/2025 18:59:59] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:00:52,545 - INFO - 127.0.0.1 - - [24/Sep/2025 19:00:52] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:00:52,568 - INFO - 127.0.0.1 - - [24/Sep/2025 19:00:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:00:52,724 - INFO - 127.0.0.1 - - [24/Sep/2025 19:00:52] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:01:04,319 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:04] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:01:04,352 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:01:04,510 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:04] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:01:30,132 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:30] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:01:30,182 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:01:30,271 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:30] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:01:49,607 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:49] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:01:49,636 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:01:49,790 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:49] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:01:58,465 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:01:58,466 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:58] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:01:58,469 - INFO - 127.0.0.1 - - [24/Sep/2025 19:01:58] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:03:04,343 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:04] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:03:04,368 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:03:04,483 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:04] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:03:15,385 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:15] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:03:15,419 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:03:15,520 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:15] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:03:29,185 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:29] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:03:29,213 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:03:29,347 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:29] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:03:34,212 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:34] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:03:34,213 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:03:34,231 - INFO - 127.0.0.1 - - [24/Sep/2025 19:03:34] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:04:43,426 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:43] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:04:43,471 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:43] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:04:43,678 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:43] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:04:43,830 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:43] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:04:54,836 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:54] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:04:54,866 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:54] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:04:54,867 - INFO - 127.0.0.1 - - [24/Sep/2025 19:04:54] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:05:16,196 - INFO - 127.0.0.1 - - [24/Sep/2025 19:05:16] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:05:16,197 - INFO - 127.0.0.1 - - [24/Sep/2025 19:05:16] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:05:16,199 - INFO - 127.0.0.1 - - [24/Sep/2025 19:05:16] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:06:41,791 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:41] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:06:41,829 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:41] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:06:41,912 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:06:42,178 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:42] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:06:54,366 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:54] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:06:54,366 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:54] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:06:54,371 - INFO - 127.0.0.1 - - [24/Sep/2025 19:06:54] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:08:30,158 - INFO - 127.0.0.1 - - [24/Sep/2025 19:08:30] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:08:30,211 - INFO - 127.0.0.1 - - [24/Sep/2025 19:08:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:08:30,215 - INFO - 127.0.0.1 - - [24/Sep/2025 19:08:30] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:09:11,199 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:11] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:09:11,245 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:09:11,331 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:11] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:09:18,516 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:18] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:09:18,539 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:18] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:09:18,687 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:18] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:09:24,785 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:24] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:09:24,810 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:24] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:09:24,954 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:24] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:09:32,104 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:32] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:09:32,170 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:09:32,267 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:32] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:09:48,400 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:48] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:09:48,419 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:09:48,537 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:48] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:09:59,558 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:59] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:09:59,582 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:59] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:09:59,738 - INFO - 127.0.0.1 - - [24/Sep/2025 19:09:59] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:10:40,174 - INFO - 127.0.0.1 - - [24/Sep/2025 19:10:40] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:10:40,199 - INFO - 127.0.0.1 - - [24/Sep/2025 19:10:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:10:40,364 - INFO - 127.0.0.1 - - [24/Sep/2025 19:10:40] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:11:17,131 - INFO - 127.0.0.1 - - [24/Sep/2025 19:11:17] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:11:17,193 - INFO - 127.0.0.1 - - [24/Sep/2025 19:11:17] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:11:17,253 - INFO - 127.0.0.1 - - [24/Sep/2025 19:11:17] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:11:42,405 - INFO - 127.0.0.1 - - [24/Sep/2025 19:11:42] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:11:42,465 - INFO - 127.0.0.1 - - [24/Sep/2025 19:11:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:11:42,510 - INFO - 127.0.0.1 - - [24/Sep/2025 19:11:42] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:12:26,097 - INFO - 127.0.0.1 - - [24/Sep/2025 19:12:26] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:12:26,114 - INFO - 127.0.0.1 - - [24/Sep/2025 19:12:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:12:26,277 - INFO - 127.0.0.1 - - [24/Sep/2025 19:12:26] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:12:32,148 - INFO - 127.0.0.1 - - [24/Sep/2025 19:12:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:12:32,148 - INFO - 127.0.0.1 - - [24/Sep/2025 19:12:32] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:12:32,162 - INFO - 127.0.0.1 - - [24/Sep/2025 19:12:32] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:13:59,939 - INFO - 127.0.0.1 - - [24/Sep/2025 19:13:59] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:13:59,959 - INFO - 127.0.0.1 - - [24/Sep/2025 19:13:59] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:14:00,097 - INFO - 127.0.0.1 - - [24/Sep/2025 19:14:00] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:14:00,285 - INFO - 127.0.0.1 - - [24/Sep/2025 19:14:00] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-24 19:14:57,543 - INFO - 127.0.0.1 - - [24/Sep/2025 19:14:57] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-24 19:14:57,576 - INFO - 127.0.0.1 - - [24/Sep/2025 19:14:57] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 19:14:57,709 - INFO - 127.0.0.1 - - [24/Sep/2025 19:14:57] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 19:14:57,901 - INFO - 127.0.0.1 - - [24/Sep/2025 19:14:57] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -

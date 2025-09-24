@@ -41,39 +41,87 @@ def generate_seating_plan(student_csv, room_csv, students_per_desk, include_deta
                         row_seats.append(None)
                         c += 1
                         continue
-                    student = student_queue.popleft()
-                    conflict = False
                     
-                    # Convert pandas row to dictionary for easier handling
-                    student_dict = {
-                        'roll_number': student.get('Roll Number', student.get('roll_number', 'N/A')),
-                        'name': student.get('Name', student.get('name', 'Unknown')),
-                        'branch': student.get('Branch', student.get('branch', 'N/A'))
-                    }
+                    # Handle multiple students per desk
+                    desk_students = []
+                    students_placed = 0
+                    desk_attempts = 0
                     
-                    # Check for conflicts
-                    if prev_row and c < len(prev_row) and prev_row[c] is not None:
-                        if prev_row[c]['branch'] == student_dict['branch']:
-                            conflict = True
-                    if row_seats and row_seats[-1] is not None and row_seats[-1]['branch'] == student_dict['branch']:
-                        conflict = True
-                    
-                    if conflict:
-                        student_queue.append(student)
-                        attempts += 1
-                        if attempts > max_attempts:
-                            print('Max attempts reached, cannot satisfy constraints.')
-                            return None, 'Unable to satisfy seating constraints. Please check your data.'
-                        continue
+                    while students_placed < students_per_desk and student_queue and desk_attempts < max_attempts:
+                        student = student_queue.popleft()
+                        conflict = False
                         
-                    row_seats.append(student_dict)
+                        # Convert pandas row to dictionary for easier handling
+                        student_dict = {
+                            'roll_number': student.get('Roll Number', student.get('roll_number', 'N/A')),
+                            'name': student.get('Name', student.get('name', 'Unknown')),
+                            'branch': student.get('Branch', student.get('branch', 'N/A'))
+                        }
+                        
+                        # Check for conflicts with students already in this desk
+                        for desk_student in desk_students:
+                            if desk_student['branch'] == student_dict['branch']:
+                                conflict = True
+                                break
+                        
+                        # Check for conflicts with previous row
+                        if not conflict and prev_row and c < len(prev_row) and prev_row[c] is not None:
+                            if isinstance(prev_row[c], list):
+                                for prev_student in prev_row[c]:
+                                    if prev_student and prev_student['branch'] == student_dict['branch']:
+                                        conflict = True
+                                        break
+                            elif prev_row[c]['branch'] == student_dict['branch']:
+                                conflict = True
+                        
+                        # Check for conflicts with adjacent desk in same row
+                        if not conflict and row_seats and row_seats[-1] is not None:
+                            if isinstance(row_seats[-1], list):
+                                for adj_student in row_seats[-1]:
+                                    if adj_student and adj_student['branch'] == student_dict['branch']:
+                                        conflict = True
+                                        break
+                            elif row_seats[-1]['branch'] == student_dict['branch']:
+                                conflict = True
+                        
+                        if conflict:
+                            student_queue.append(student)
+                            desk_attempts += 1
+                            continue
+                            
+                        desk_students.append(student_dict)
+                        students_placed += 1
+                        desk_attempts = 0
+                    
+                    # If we couldn't place any students due to conflicts, break the loop
+                    if students_placed == 0 and desk_attempts >= max_attempts:
+                        print('Max attempts reached, cannot satisfy constraints.')
+                        return None, [], 'Unable to satisfy seating constraints. Please check your data.'
+                    
+                    # Store the desk (single student or list of students)
+                    if students_per_desk == 1:
+                        row_seats.append(desk_students[0] if desk_students else None)
+                    else:
+                        row_seats.append(desk_students if desk_students else None)
+                    
                     c += 1
                     attempts = 0
                 room_seats.append(row_seats)
                 prev_row = row_seats
             seating_plan.append({'room': room['room_number'], 'seats': room_seats})
+        # Collect unseated students
+        unseated_students = []
+        while student_queue:
+            student = student_queue.popleft()
+            unseated_students.append({
+                'roll_number': student.get('Roll Number', student.get('roll_number', 'N/A')),
+                'name': student.get('Name', student.get('name', 'Unknown')),
+                'branch': student.get('Branch', student.get('branch', 'N/A'))
+            })
+        
         print('Seating plan generated.')
-        return seating_plan, None
+        print(f'Unseated students: {len(unseated_students)}')
+        return seating_plan, unseated_students, None
     except Exception as e:
         print('Error in seating logic:', str(e))
-        return None, str(e)
+        return None, [], str(e)
