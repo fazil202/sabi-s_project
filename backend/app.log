@@ -1,0 +1,65 @@
+2025-09-24 11:39:51,872 - INFO - package: mysql.connector.plugins
+2025-09-24 11:39:51,872 - INFO - plugin_name: mysql_native_password
+2025-09-24 11:39:51,873 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 11:39:51,900 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.175:5000
+2025-09-24 11:39:51,900 - INFO - [33mPress CTRL+C to quit[0m
+2025-09-24 11:39:51,901 - INFO -  * Restarting with stat
+2025-09-24 11:39:53,296 - INFO - package: mysql.connector.plugins
+2025-09-24 11:39:53,296 - INFO - plugin_name: mysql_native_password
+2025-09-24 11:39:53,297 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 11:39:53,311 - WARNING -  * Debugger is active!
+2025-09-24 11:39:53,317 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 11:41:59,983 - INFO - package: mysql.connector.plugins
+2025-09-24 11:41:59,983 - INFO - plugin_name: mysql_native_password
+2025-09-24 11:41:59,984 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 11:42:00,021 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.175:5000
+2025-09-24 11:42:00,021 - INFO - [33mPress CTRL+C to quit[0m
+2025-09-24 11:42:00,023 - INFO -  * Restarting with stat
+2025-09-24 11:42:01,295 - INFO - package: mysql.connector.plugins
+2025-09-24 11:42:01,296 - INFO - plugin_name: mysql_native_password
+2025-09-24 11:42:01,296 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-24 11:42:01,314 - WARNING -  * Debugger is active!
+2025-09-24 11:42:01,320 - INFO -  * Debugger PIN: 957-178-815
+2025-09-24 11:42:05,804 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:05] "GET /login HTTP/1.1" 200 -
+2025-09-24 11:42:05,948 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:42:06,067 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:06] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 11:42:10,256 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:10] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-24 11:42:10,257 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:10] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:42:10,269 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:10] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 11:42:14,311 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:14] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:42:14,610 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:42:14,688 - INFO - 127.0.0.1 - - [24/Sep/2025 11:42:14] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:46:35,273 - INFO - 127.0.0.1 - - [24/Sep/2025 11:46:35] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:46:35,290 - INFO - 127.0.0.1 - - [24/Sep/2025 11:46:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:46:35,532 - INFO - 127.0.0.1 - - [24/Sep/2025 11:46:35] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:47:42,605 - INFO - 127.0.0.1 - - [24/Sep/2025 11:47:42] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:47:42,617 - INFO - 127.0.0.1 - - [24/Sep/2025 11:47:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:47:42,842 - INFO - 127.0.0.1 - - [24/Sep/2025 11:47:42] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:51:46,169 - INFO - 127.0.0.1 - - [24/Sep/2025 11:51:46] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:51:46,188 - INFO - 127.0.0.1 - - [24/Sep/2025 11:51:46] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:51:46,407 - INFO - 127.0.0.1 - - [24/Sep/2025 11:51:46] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:51:51,774 - INFO - 127.0.0.1 - - [24/Sep/2025 11:51:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:51:51,775 - INFO - 127.0.0.1 - - [24/Sep/2025 11:51:51] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:51:51,780 - INFO - 127.0.0.1 - - [24/Sep/2025 11:51:51] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 11:54:06,904 - INFO - 127.0.0.1 - - [24/Sep/2025 11:54:06] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:54:06,932 - INFO - 127.0.0.1 - - [24/Sep/2025 11:54:06] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 11:54:07,151 - INFO - 127.0.0.1 - - [24/Sep/2025 11:54:07] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:54:07,253 - INFO - 127.0.0.1 - - [24/Sep/2025 11:54:07] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:56:22,725 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:22] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:56:22,740 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:56:22,990 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:22] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:56:48,815 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:48] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:56:48,838 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:56:49,076 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:49] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:56:56,792 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:56] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-24 11:56:56,793 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:56] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-24 11:56:56,793 - INFO - 127.0.0.1 - - [24/Sep/2025 11:56:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:57:12,330 - INFO - 127.0.0.1 - - [24/Sep/2025 11:57:12] "GET /signup HTTP/1.1" 200 -
+2025-09-24 11:57:12,635 - INFO - 127.0.0.1 - - [24/Sep/2025 11:57:12] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-24 11:57:12,667 - INFO - 127.0.0.1 - - [24/Sep/2025 11:57:12] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
