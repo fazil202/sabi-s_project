@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 23, 2025 at 03:33 PM
+-- Generation Time: Sep 24, 2025 at 05:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -42,22 +42,96 @@ CREATE TABLE `activity_logs` (
 --
 
 INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `details`, `ip_address`, `user_agent`, `created_at`) VALUES
-(1, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-23 12:19:59'),
-(2, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-23 12:19:59'),
-(3, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 0 students in 3 rooms', NULL, NULL, '2025-09-23 12:20:41'),
-(4, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 0 students in 3 rooms', NULL, NULL, '2025-09-23 12:22:40'),
-(5, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-23 12:33:36'),
-(6, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.104.1 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36', '2025-09-23 12:33:36'),
-(7, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-23 12:34:07'),
-(8, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.104.1 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36', '2025-09-23 12:34:07'),
-(9, 1, 'LOGOUT', 'User admin logged out', NULL, NULL, '2025-09-23 12:34:33'),
-(10, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-23 12:34:36'),
-(11, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-23 12:34:36'),
-(12, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 0 students in 3 rooms', NULL, NULL, '2025-09-23 12:34:54'),
-(13, 1, 'PDF_GENERATED', 'PDF seating_plan_20250923_180457.pdf generated with 0 students in 3 rooms', NULL, NULL, '2025-09-23 12:34:57'),
-(14, 1, 'LOGOUT', 'User admin logged out', NULL, NULL, '2025-09-23 12:46:39'),
-(15, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-23 12:47:36'),
-(16, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-23 12:47:36');
+(31, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-24 01:01:59'),
+(32, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 01:01:59'),
+(33, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:02:11'),
+(34, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:04:48'),
+(35, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:04:54'),
+(36, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:05:47'),
+(37, 1, 'PDF_GENERATED', 'PDF seating_plan_20250923_180557.pdf generated with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:05:57'),
+(38, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:11:47'),
+(39, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:13:38'),
+(40, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:17:52'),
+(41, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:19:23'),
+(42, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-24 01:19:36'),
+(43, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 01:19:36'),
+(44, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:19:57'),
+(45, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-24 01:22:50'),
+(46, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 01:22:50'),
+(47, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 01:23:04'),
+(48, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:26:56'),
+(49, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:26:58'),
+(50, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:26:59'),
+(51, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:01'),
+(52, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:02'),
+(53, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:03'),
+(54, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:05'),
+(55, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:06'),
+(56, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:07'),
+(57, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:09'),
+(58, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:10'),
+(59, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:12'),
+(60, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:13'),
+(61, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:15'),
+(62, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:16'),
+(63, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:18'),
+(64, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:19'),
+(65, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:21'),
+(66, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:22'),
+(67, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:24'),
+(68, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:25'),
+(69, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:27'),
+(70, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:28'),
+(71, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:29'),
+(72, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:30'),
+(73, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:32'),
+(74, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:33'),
+(75, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:35'),
+(76, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:36'),
+(77, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:38'),
+(78, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:39'),
+(79, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:41'),
+(80, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:42'),
+(81, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:44'),
+(82, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:45'),
+(83, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:46'),
+(84, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:47'),
+(85, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:27:49'),
+(86, 1, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 01:41:13'),
+(87, 1, 'LOGIN', 'User admin logged in successfully', NULL, NULL, '2025-09-24 02:09:31'),
+(88, 1, 'LOGIN', 'User admin logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 02:09:31'),
+(89, 1, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 02:18:27'),
+(90, 1, 'LOGOUT', 'User admin logged out', NULL, NULL, '2025-09-24 02:50:26'),
+(91, 3, 'USER_CREATED', 'New user safiha created with role admin', NULL, NULL, '2025-09-24 02:54:08'),
+(92, 3, 'LOGIN', 'User safiha logged in successfully', NULL, NULL, '2025-09-24 02:54:15'),
+(93, 3, 'LOGIN', 'User safiha logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 02:54:15'),
+(94, 3, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 02:54:45'),
+(95, 3, 'PDF_GENERATED', 'PDF seating_plan_20250923_195458.pdf generated with 15 students in 3 rooms', NULL, NULL, '2025-09-24 02:54:58'),
+(96, 3, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 02:55:09'),
+(97, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:56:52'),
+(98, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:56:55'),
+(99, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:56:58'),
+(100, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:01'),
+(101, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:04'),
+(102, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:07'),
+(103, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:10'),
+(104, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:14'),
+(105, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:17'),
+(106, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:20'),
+(107, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:23'),
+(108, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:26'),
+(109, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:29'),
+(110, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:33'),
+(111, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:36'),
+(112, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:39'),
+(113, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:42'),
+(114, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:45'),
+(115, 3, 'EMAIL_SENT', 'Seating plan sent to mudinjakandupidi040101@gmail.com', NULL, NULL, '2025-09-24 02:57:48'),
+(116, 3, 'LOGOUT', 'User safiha logged out', NULL, NULL, '2025-09-24 03:00:41'),
+(117, 3, 'LOGIN', 'User safiha logged in successfully', NULL, NULL, '2025-09-24 03:00:44'),
+(118, 3, 'LOGIN', 'User safiha logged in', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 03:00:44'),
+(119, 3, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 15 students in 3 rooms', NULL, NULL, '2025-09-24 03:03:47'),
+(120, 3, 'SEATING_PLAN_GENERATED', 'Generated seating plan with 48 students in 3 rooms', NULL, NULL, '2025-09-24 03:08:04');
 
 -- --------------------------------------------------------
 
@@ -95,20 +169,20 @@ CREATE TABLE `login_attempts` (
 --
 
 INSERT INTO `login_attempts` (`id`, `username`, `ip_address`, `success`, `attempt_time`) VALUES
-(1, 'fazil', NULL, 0, '2025-09-23 12:13:49'),
-(2, 'admin', NULL, 0, '2025-09-23 12:14:03'),
-(3, 'admin', NULL, 0, '2025-09-23 12:14:27'),
-(4, 'admin', NULL, 0, '2025-09-23 12:14:43'),
-(5, 'admin', NULL, 0, '2025-09-23 12:19:58'),
-(6, 'admin', NULL, 1, '2025-09-23 12:19:59'),
-(7, 'admin', NULL, 0, '2025-09-23 12:33:36'),
-(8, 'admin', NULL, 1, '2025-09-23 12:33:36'),
-(9, 'admin', NULL, 0, '2025-09-23 12:34:07'),
-(10, 'admin', NULL, 1, '2025-09-23 12:34:07'),
-(11, 'admin', NULL, 0, '2025-09-23 12:34:35'),
-(12, 'admin', NULL, 1, '2025-09-23 12:34:36'),
-(13, 'admin', NULL, 0, '2025-09-23 12:47:35'),
-(14, 'admin', NULL, 1, '2025-09-23 12:47:36');
+(17, 'admin', NULL, 0, '2025-09-24 00:43:44'),
+(18, 'admin', NULL, 1, '2025-09-24 00:43:45'),
+(19, 'admin', NULL, 0, '2025-09-24 01:01:59'),
+(20, 'admin', NULL, 1, '2025-09-24 01:01:59'),
+(21, 'admin', NULL, 0, '2025-09-24 01:19:36'),
+(22, 'admin', NULL, 1, '2025-09-24 01:19:36'),
+(23, 'admin', NULL, 0, '2025-09-24 01:22:50'),
+(24, 'admin', NULL, 1, '2025-09-24 01:22:50'),
+(25, 'admin', NULL, 0, '2025-09-24 02:09:31'),
+(26, 'admin', NULL, 1, '2025-09-24 02:09:31'),
+(27, 'safiha', NULL, 0, '2025-09-24 02:54:15'),
+(28, 'safiha', NULL, 1, '2025-09-24 02:54:15'),
+(29, 'safiha', NULL, 0, '2025-09-24 03:00:44'),
+(30, 'safiha', NULL, 1, '2025-09-24 03:00:44');
 
 -- --------------------------------------------------------
 
@@ -150,7 +224,8 @@ CREATE TABLE `pdf_history` (
 --
 
 INSERT INTO `pdf_history` (`id`, `user_id`, `filename`, `file_path`, `student_count`, `room_count`, `students_per_desk`, `include_detained`, `building`, `plan_details`, `created_at`) VALUES
-(1, 1, 'seating_plan_20250923_180457.pdf', 'seating_plan_20250923_180457.pdf\\pdfs', 0, 3, 1, 0, 'Main Building', NULL, '2025-09-23 12:34:57');
+(3, 1, 'seating_plan_20250923_180557.pdf', 'D:\\Development\\Sheerin\\Sabi\'s Project\\seating_arrangements\\data\\pdfs\\seating_plan_20250923_180557.pdf', 15, 3, 1, 0, 'Main Building', NULL, '2025-09-24 01:05:57'),
+(4, 3, 'seating_plan_20250923_195458.pdf', 'D:\\Development\\Sheerin\\Sabi\'s Project\\seating_arrangements\\data\\pdfs\\seating_plan_20250923_195458.pdf', 15, 3, 1, 0, 'Main Building', NULL, '2025-09-24 02:54:58');
 
 -- --------------------------------------------------------
 
@@ -187,6 +262,31 @@ CREATE TABLE `students` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `students`
+--
+
+INSERT INTO `students` (`id`, `roll_number`, `name`, `branch`, `section`, `is_detained`, `email`, `created_at`) VALUES
+(1, '229X1A2901', 'Aditi', 'CS', 'A', 1, 'mudinjakandupidi040101@gmail.com', '2025-09-24 01:02:11'),
+(192, '229X1A2902', 'Bharat', 'CS', 'A', 0, 'nan', '2025-09-24 02:18:27'),
+(193, '229X1A2905', 'Charan', 'CS', 'A', 0, 'nan', '2025-09-24 02:18:27'),
+(194, '229X1A2906', 'Deepa', 'CS', 'A', 1, 'nan', '2025-09-24 02:18:27'),
+(195, '229X1A2907', 'Eshan', 'CS', 'A', 1, 'nan', '2025-09-24 02:18:27'),
+(196, '229X1A2908', 'Farah', 'CS', 'B', 1, 'nan', '2025-09-24 02:18:27'),
+(197, '229X1A2909', 'Guru', 'CS', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(198, '229X1A2910', 'Hari', 'CS', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(199, '229X1A2912', 'Isha', 'CS', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(200, '229X1A2915', 'Jyoti', 'CS', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(201, '229X1A2916', 'Karan', 'ME', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(202, '229X1A2917', 'Lina', 'ME', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(203, '229X1A2918', 'Mafalsej', 'ME', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(204, '229X1A2920', 'Neha', 'ME', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(205, '229X1A2922', 'Om', 'ME', 'A', 0, 'nan', '2025-09-24 02:18:27'),
+(206, '239X5A02C3', 'santa', 'EC', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(207, '239X5A02C5', 'puwin', 'EC', 'B', 0, 'nan', '2025-09-24 02:18:27'),
+(208, '239X5A02D0', 'dunk', 'EC', 'A', 0, 'nan', '2025-09-24 02:18:27'),
+(209, '239X5A02D6', 'archen', 'EC', 'A', 0, 'nan', '2025-09-24 02:18:27');
+
 -- --------------------------------------------------------
 
 --
@@ -207,14 +307,14 @@ CREATE TABLE `system_settings` (
 --
 
 INSERT INTO `system_settings` (`id`, `setting_key`, `setting_value`, `description`, `updated_by`, `updated_at`) VALUES
-(1, 'students_per_desk', '1', 'Default number of students per desk', NULL, '2025-09-23 11:10:06'),
-(2, 'include_detained', 'false', 'Include detained students in seating plans by default', NULL, '2025-09-23 11:10:06'),
-(3, 'default_building', 'Main Building', 'Default building for seating arrangements', NULL, '2025-09-23 11:10:06'),
-(4, 'session_timeout', '3600', 'Session timeout in seconds', NULL, '2025-09-23 11:10:06'),
-(5, 'max_login_attempts', '5', 'Maximum login attempts before account lockout', NULL, '2025-09-23 11:10:06'),
-(6, 'email_notifications', 'true', 'Enable email notifications', NULL, '2025-09-23 11:10:06'),
-(7, 'password_min_length', '6', 'Minimum password length', NULL, '2025-09-23 11:10:06'),
-(8, 'pdf_retention_days', '30', 'Number of days to retain PDF files', NULL, '2025-09-23 11:10:06');
+(65, 'students_per_desk', '1', 'Default number of students per desk', NULL, '2025-09-24 00:58:45'),
+(66, 'include_detained', 'false', 'Include detained students in seating plans by default', NULL, '2025-09-24 00:58:45'),
+(67, 'default_building', 'Main Building', 'Default building for seating arrangements', NULL, '2025-09-24 00:58:45'),
+(68, 'session_timeout', '3600', 'Session timeout in seconds', NULL, '2025-09-24 00:58:45'),
+(69, 'max_login_attempts', '5', 'Maximum login attempts before account lockout', NULL, '2025-09-24 00:58:45'),
+(70, 'email_notifications', 'true', 'Enable email notifications', NULL, '2025-09-24 00:58:45'),
+(71, 'password_min_length', '6', 'Minimum password length', NULL, '2025-09-24 00:58:45'),
+(72, 'pdf_retention_days', '30', 'Number of days to retain PDF files', NULL, '2025-09-24 00:58:45');
 
 -- --------------------------------------------------------
 
@@ -239,7 +339,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `full_name`, `role`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@example.com', '$2b$12$cdoLjjHuqAd09S6xCMqdm.mHhVoaDAGAVJnPzYQTLfM3hFC9.ZnZa', 'Administrator', 'student', 1, '2025-09-23 07:25:14', '2025-09-23 12:19:26');
+(1, 'admin', 'admin@example.com', '$2b$12$cdoLjjHuqAd09S6xCMqdm.mHhVoaDAGAVJnPzYQTLfM3hFC9.ZnZa', 'Administrator', 'student', 1, '2025-09-23 07:25:14', '2025-09-23 12:19:26'),
+(3, 'safiha', 'safihatech@gmail.com', '$2b$12$Pco0T4zGOjKEKMQZnnFX0uFB1DQeaEHX6OxXmYKufG/ESUzmNrstC', 'safiha', 'admin', 1, '2025-09-24 02:54:08', '2025-09-24 02:54:08');
 
 --
 -- Indexes for dumped tables
@@ -318,7 +419,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- AUTO_INCREMENT for table `email_notifications`
@@ -330,7 +431,7 @@ ALTER TABLE `email_notifications`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `password_reset_tokens`
@@ -342,7 +443,7 @@ ALTER TABLE `password_reset_tokens`
 -- AUTO_INCREMENT for table `pdf_history`
 --
 ALTER TABLE `pdf_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `rooms_config`
@@ -354,19 +455,19 @@ ALTER TABLE `rooms_config`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=381;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
 --
 ALTER TABLE `system_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=257;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
