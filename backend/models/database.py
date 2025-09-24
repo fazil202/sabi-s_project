@@ -6,9 +6,52 @@ import secrets
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
 import logging
 
 class Database:
+    def get_all_student_emails(self):
+        """Return a list of all student emails from the students table (non-empty only)."""
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT email FROM students WHERE email IS NOT NULL AND email != ''")
+            results = cursor.fetchall()
+            return [row[0] for row in results]
+        except Exception as e:
+            print(f"Error getting student emails: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+    def import_students_from_csv(self, csv_path):
+        """Import students from a CSV file into the students table."""
+        import pandas as pd
+        try:
+            students = pd.read_csv(csv_path)
+            cursor = self.connection.cursor()
+            inserted = 0
+            for _, row in students.iterrows():
+                roll_number = str(row.get('Roll Number', row.get('roll_number', ''))).strip()
+                name = str(row.get('Name', row.get('name', ''))).strip()
+                branch = str(row.get('Branch', row.get('branch', ''))).strip()
+                section = str(row.get('Section', row.get('section', ''))).strip() if 'Section' in row or 'section' in row else None
+                is_detained = bool(row.get('detained', row.get('detained_status', False)))
+                email = str(row.get('Email', row.get('email', ''))).strip() if 'Email' in row or 'email' in row else None
+                if not roll_number or not name or not branch:
+                    continue
+                insert_query = """
+                    INSERT INTO students (roll_number, name, branch, section, is_detained, email)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE name=VALUES(name), branch=VALUES(branch), section=VALUES(section), is_detained=VALUES(is_detained), email=VALUES(email)
+                """
+                cursor.execute(insert_query, (roll_number, name, branch, section, is_detained, email))
+                inserted += 1
+            self.connection.commit()
+            cursor.close()
+            return inserted
+        except Exception as e:
+            print(f"Error importing students from CSV: {e}")
+            return 0
     def __init__(self):
         self.host = 'localhost'
         self.database = 'seating_plan_db'
@@ -19,8 +62,8 @@ class Database:
         # Email configuration
         self.smtp_server = 'smtp.gmail.com'
         self.smtp_port = 587
-        self.email_username = 'your_email@gmail.com'  # Configure this
-        self.email_password = 'your_app_password'  # Configure this
+        self.email_username = 'seatgenerator.gprec@gmail.com'  # Configure this
+        self.email_password = 'jhpj lkkv rjmp fzfc'  # Configure this
     
     def connect(self):
         try:
@@ -588,28 +631,39 @@ class Database:
             if cursor:
                 cursor.close()
     
-    def send_email(self, to_email, subject, body):
-        """Send email notification"""
+    def send_email(self, to_email, subject, body, pdf_path=None):
+        """Send email notification, optionally with PDF attachment. Returns (success, error_message)"""
         try:
+            from email.mime.base import MIMEBase
+            from email import encoders
             msg = MIMEMultipart()
             msg['From'] = self.email_username
             msg['To'] = to_email
             msg['Subject'] = subject
-            
+
             msg.attach(MIMEText(body, 'html'))
-            
+
+            # Attach PDF if provided
+            if pdf_path and os.path.exists(pdf_path):
+                with open(pdf_path, 'rb') as f:
+                    part = MIMEBase('application', 'octet-stream')
+                    part.set_payload(f.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(pdf_path)}"')
+                msg.attach(part)
+
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             server.starttls()
             server.login(self.email_username, self.email_password)
-            
+
             text = msg.as_string()
             server.sendmail(self.email_username, to_email, text)
             server.quit()
-            
-            return True
+
+            return True, None
         except Exception as e:
             print(f"Error sending email: {e}")
-            return False
+            return False, str(e)
     
     def get_users_by_role(self, role=None):
         """Get users filtered by role"""

@@ -1,0 +1,106 @@
+/* Custom styles for index.html */
+body {
+  background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  max-width: 420px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 32px 28px 24px 28px;
+}
+h1 {
+  text-align: center;
+  color: #2d3e50;
+  margin-bottom: 28px;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+form label {
+  display: block;
+  margin-bottom: 16px;
+  color: #34495e;
+  font-weight: 500;
+}
+input[type="file"],
+input[type="number"] {
+  margin-top: 6px;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #dbe2ea;
+  border-radius: 5px;
+  background: #f8fafc;
+  font-size: 1rem;
+}
+input[type="checkbox"] {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+button[type="submit"] {
+  width: 100%;
+  background: #2d8cf0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 18px;
+  transition: background 0.2s;
+}
+button[type="submit"]:hover {
+  background: #1769aa;
+}
+ul {
+  margin-top: 20px;
+  padding-left: 18px;
+}
+li {
+  color: #e74c3c;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.top-links {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+.btn-link {
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: #fff;
+  display: inline-block;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn-info {
+  background: #17a2b8;
+}
+.btn-info:hover {
+  background: #138496;
+}
+.btn-danger {
+  background: #dc3545;
+}
+.btn-danger:hover {
+  background: #a71d2a;
+}
+.welcome-msg {
+  text-align: center;
+  color: #6c757d;
+  margin-bottom: 20px;
+}

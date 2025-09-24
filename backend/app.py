@@ -114,7 +114,7 @@ def signup():
             flash('Database not available. Please contact administrator.')
             return redirect(url_for('signup'))
     
-    return render_template('signup.html')
+    return render_template('signup/signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -153,7 +153,7 @@ def login():
                 flash('Invalid credentials.')
                 return redirect(url_for('login'))
     
-    return render_template('login.html')
+    return render_template('login/login.html')
 
 @app.route('/logout')
 def logout():
@@ -190,7 +190,7 @@ def dashboard():
             stats['faculty_count'] = len([u for u in all_users if u['role'] == 'faculty'])
             stats['student_count'] = len([u for u in all_users if u['role'] == 'student'])
     
-    return render_template('dashboard.html', stats=stats, user_role=user_role)
+    return render_template('dashboard/dashboard.html', stats=stats, user_role=user_role)
 
 @app.route('/settings', methods=['GET', 'POST'])
 @require_login
@@ -249,7 +249,7 @@ def settings():
         for key in settings_keys:
             current_settings[key] = db.get_setting(key, '')
     
-    return render_template('settings.html', current_settings=current_settings, user_role=get_user_role())
+    return render_template('settings/settings.html', current_settings=current_settings, user_role=get_user_role())
 
 @app.route('/admin')
 @require_role('admin')
@@ -264,7 +264,7 @@ def admin_panel():
     # Get recent activity logs
     recent_logs = db.get_activity_logs(limit=20)
     
-    return render_template('admin.html', users=all_users, recent_logs=recent_logs)
+    return render_template('admin/admin.html', users=all_users, recent_logs=recent_logs)
 
 @app.route('/admin/users')
 @require_role('admin')
@@ -321,7 +321,7 @@ def reset_password():
         
         return redirect(url_for('login'))
     
-    return render_template('reset_password.html')
+    return render_template('reset password/reset_password.html')
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password_with_token(token):
@@ -344,7 +344,7 @@ def reset_password_with_token(token):
         
         return redirect(url_for('reset_password_with_token', token=token))
     
-    return render_template('reset_password_form.html', token=token)
+    return render_template('reset password/reset_password_form.html', token=token)
 
 @app.route('/pdf_history')
 def pdf_history():
@@ -358,11 +358,10 @@ def pdf_history():
         # Calculate totals for stats
         total_students = sum(pdf['student_count'] for pdf in pdf_history)
         total_rooms = sum(pdf['room_count'] for pdf in pdf_history)
-        
-        return render_template('pdf_history.html', 
-                             pdf_history=pdf_history,
-                             total_students=total_students,
-                             total_rooms=total_rooms)
+        return render_template('pdf history/pdf_history.html', 
+                 pdf_history=pdf_history,
+                 total_students=total_students,
+                 total_rooms=total_rooms)
     else:
         flash('Database not available.')
         return redirect(url_for('index'))
@@ -424,6 +423,11 @@ def generate_plan():
         session['last_students_per_desk'] = students_per_desk
         session['last_include_detained'] = include_detained
         session['last_building'] = building
+
+        # Import students into the database
+        if db and db.connection and db.connection.is_connected():
+            inserted = db.import_students_from_csv(student_path)
+            print(f"Imported {inserted} students from CSV into the database.")
         
         from backend.utils.seating import generate_seating_plan
         seating_plan, error = generate_seating_plan(student_path, room_path, students_per_desk, include_detained)
@@ -435,12 +439,16 @@ def generate_plan():
         # Log activity
         if db and db.connection and db.connection.is_connected():
             user_id = session.get('user_id')
-            student_count = sum(len(room.get('students', [])) for room in seating_plan)
+            student_count = sum(
+                sum(1 for seat in row if seat is not None)
+                for room in seating_plan
+                for row in room.get('seats', [])
+            )
             room_count = len(seating_plan)
             db.log_activity(user_id, 'SEATING_PLAN_GENERATED', 
                           f"Generated seating plan with {student_count} students in {room_count} rooms")
         
-        return render_template('seating_plan.html', seating_plan=seating_plan, building=building)
+        return render_template('seating plan/seating_plan.html', seating_plan=seating_plan, building=building)
     
     # Get default settings
     default_settings = {}
@@ -449,7 +457,7 @@ def generate_plan():
         default_settings['include_detained'] = db.get_setting('include_detained', 'false') == 'true'
         default_settings['default_building'] = db.get_setting('default_building', 'Main Building')
     
-    return render_template('generate_plan.html', default_settings=default_settings)
+    return render_template('generate plan/generate_plan.html', default_settings=default_settings)
 
 @app.route('/download_pdf', methods=['GET', 'POST'])
 @require_login
@@ -477,30 +485,60 @@ def download_pdf():
         return redirect(url_for('generate_plan'))
     
     try:
-        # Create pdfs folder if it doesn't exist
-        pdf_folder = '../data/pdfs'
+        # Use absolute path for pdf_folder
+        base_dir = os.path.abspath(os.path.dirname(__file__))
+        pdf_folder = os.path.join(base_dir, '..', 'data', 'pdfs')
+        pdf_folder = os.path.abspath(pdf_folder)
         os.makedirs(pdf_folder, exist_ok=True)
-        
+
         # Generate PDF with unique filename
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         pdf_filename = f"seating_plan_{timestamp}.pdf"
-        
-        pdf_path = export_to_pdf(seating_plan, pdf_folder, pdf_filename)
-        
+
+        pdf_path = export_to_pdf(seating_plan, pdf_filename, pdf_folder)
+
         # Save to database if available
         if db and db.connection and db.connection.is_connected():
             user_id = session.get('user_id')
-            
+
             # Count students and rooms
-            student_count = sum(len(room.get('students', [])) for room in seating_plan)
+            student_count = sum(
+                sum(1 for seat in row if seat is not None)
+                for room in seating_plan
+                for row in room.get('seats', [])
+            )
             room_count = len(seating_plan)
-            
+
             db.save_pdf_history(
                 user_id, pdf_filename, pdf_path, 
                 student_count, room_count, 
                 students_per_desk, include_detained, building
             )
-        
+
+        # Send email notification after PDF generation
+        email_results = []
+        # Example: send to all faculty (customize as needed)
+        if db and db.connection and db.connection.is_connected():
+            faculty_users = db.get_users_by_role('faculty')
+            recipients = [user['email'] for user in faculty_users]
+            for email in recipients:
+                subject = "Exam Seating Plan"
+                body = f"""
+                <h2>Exam Seating Plan</h2>
+                <p>Please find attached the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.</p>
+                <p>Best regards,<br>Exam Management System</p>
+                """
+                success, error_msg = db.send_email(email, subject, body)
+                if success:
+                    db.log_activity(user_id, 'EMAIL_SENT', f"Seating plan sent to {email}")
+                    email_results.append(f"Email sent to {email}")
+                else:
+                    email_results.append(f"Failed to send email to {email}: {error_msg}")
+        if email_results:
+            for msg in email_results:
+                flash(msg)
+        else:
+            flash('No recipients found for email notifications.')
         return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
     except Exception as e:
         flash(f'Error generating PDF: {str(e)}')
@@ -527,15 +565,18 @@ def send_email_notifications():
     # Get email addresses based on recipient type
     recipients = []
     if recipient_type in ['students', 'both']:
-        # Get student emails from the last uploaded CSV
-        # This would need to be implemented based on your CSV structure
-        pass
-    
+        recipients.extend(db.get_all_student_emails())
     if recipient_type in ['faculty', 'both']:
         faculty_users = db.get_users_by_role('faculty')
         recipients.extend([user['email'] for user in faculty_users])
     
+    # Debug: log and show recipients
+    import logging
+    logging.info(f"Email notification recipients: {recipients}")
+    flash(f"Recipients: {', '.join(recipients) if recipients else 'None'}")
+
     # Send emails (implementation depends on your email setup)
+    email_results = []
     for email in recipients:
         subject = "Exam Seating Plan"
         body = f"""
@@ -543,13 +584,17 @@ def send_email_notifications():
         <p>Please find attached the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.</p>
         <p>Best regards,<br>Exam Management System</p>
         """
-        
-        success = db.send_email(email, subject, body)
+        success, error_msg = db.send_email(email, subject, body, pdf_path=pdf_path)
         if success:
-            # Log successful email
             db.log_activity(user_id, 'EMAIL_SENT', f"Seating plan sent to {email}")
-    
-    flash('Email notifications sent successfully.')
+            email_results.append(f"Email sent to {email}")
+        else:
+            email_results.append(f"Failed to send email to {email}: {error_msg}")
+    if email_results:
+        for msg in email_results:
+            flash(msg)
+    else:
+        flash('No recipients found for email notifications.')
     return redirect(url_for('pdf_history'))
 
 # API Endpoints
