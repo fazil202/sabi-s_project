@@ -346,7 +346,7 @@ def reset_password_with_token(token):
     
     return render_template('reset password/reset_password_form.html', token=token)
 
-@app.route('/pdf_history')
+@app.route('/pdf_history', methods=['GET', 'POST'])
 def pdf_history():
     if not is_logged_in():
         return redirect(url_for('login'))
