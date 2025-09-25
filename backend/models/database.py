@@ -1,95 +1,138 @@
 import mysql.connector
 from mysql.connector import Error
 import bcrypt
-from datetime import datetime, timedelta
-import secrets
 import smtplib
+import csv
+import os
+import secrets
+from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import os
-import logging
 
 class Database:
-    def get_all_student_emails(self):
-        """Return a list of all student emails from the students table (non-empty only)."""
-        try:
-            cursor = self.connection.cursor()
-            cursor.execute("SELECT email FROM students WHERE email IS NOT NULL AND email != ''")
-            results = cursor.fetchall()
-            return [row[0] for row in results]
-        except Exception as e:
-            print(f"Error getting student emails: {e}")
-            return []
-        finally:
-            if cursor:
-                cursor.close()
-    def import_students_from_csv(self, csv_path):
-        """Import students from a CSV file into the students table."""
-        import pandas as pd
-        try:
-            students = pd.read_csv(csv_path)
-            cursor = self.connection.cursor()
-            inserted = 0
-            for _, row in students.iterrows():
-                roll_number = str(row.get('Roll Number', row.get('roll_number', ''))).strip()
-                name = str(row.get('Name', row.get('name', ''))).strip()
-                branch = str(row.get('Branch', row.get('branch', ''))).strip()
-                section = str(row.get('Section', row.get('section', ''))).strip() if 'Section' in row or 'section' in row else None
-                is_detained = bool(row.get('detained', row.get('detained_status', False)))
-                email = str(row.get('Email', row.get('email', ''))).strip() if 'Email' in row or 'email' in row else None
-                if not roll_number or not name or not branch:
-                    continue
-                insert_query = """
-                    INSERT INTO students (roll_number, name, branch, section, is_detained, email)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    ON DUPLICATE KEY UPDATE name=VALUES(name), branch=VALUES(branch), section=VALUES(section), is_detained=VALUES(is_detained), email=VALUES(email)
-                """
-                cursor.execute(insert_query, (roll_number, name, branch, section, is_detained, email))
-                inserted += 1
-            self.connection.commit()
-            cursor.close()
-            return inserted
-        except Exception as e:
-            print(f"Error importing students from CSV: {e}")
-            return 0
     def __init__(self):
         self.host = 'localhost'
+        self.user = 'root'
+        self.password = ''
         self.database = 'seating_plan_db'
-        self.user = 'root'  # Change to your MySQL username
-        self.password = ''  # Change to your MySQL password
-        self.connection = None
         
         # Email configuration
-        self.smtp_server = 'smtp.gmail.com'
+        self.smtp_server = "smtp.gmail.com"
         self.smtp_port = 587
-        self.email_username = 'seatgenerator.gprec@gmail.com'  # Configure this
-        self.email_password = 'jhpj lkkv rjmp fzfc'  # Configure this
-    
+        self.email_username = "your_email@gmail.com"
+        self.email_password = "your_app_password"
+        
+        self.connection = None
+        self.connect()
+
     def connect(self):
+        """Connect to MySQL database"""
         try:
             self.connection = mysql.connector.connect(
                 host=self.host,
-                database=self.database,
                 user=self.user,
-                password=self.password
+                password=self.password,
+                database=self.database
             )
+            
             if self.connection.is_connected():
+                print("Successfully connected to MySQL database")
                 return True
+            
         except Error as e:
             print(f"Error connecting to MySQL: {e}")
+            self.connection = None
             return False
-    
-    def disconnect(self):
+
+    def close(self):
+        """Close database connection"""
         if self.connection and self.connection.is_connected():
             self.connection.close()
-    
-    def create_tables(self):
-        """Create the necessary tables if they don't exist"""
+            print("Database connection closed")
+
+    def create_user(self, username, email, password, full_name, role='student'):
+        """Create a new user"""
         try:
             cursor = self.connection.cursor()
             
-            # Users table with enhanced fields
-            create_users_table = """
+            # Hash password
+            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            
+            query = """
+            INSERT INTO users (username, email, password_hash, full_name, role)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (username, email, password_hash, full_name, role))
+            self.connection.commit()
+            
+            user_id = cursor.lastrowid
+            print(f"User created successfully with ID: {user_id}")
+            return True, user_id
+            
+        except Error as e:
+            print(f"Error creating user: {e}")
+            self.connection.rollback()
+            return False, str(e)
+        finally:
+            if cursor:
+                cursor.close()
+
+    def authenticate_user(self, username, password):
+        """Authenticate user login"""
+        try:
+            cursor = self.connection.cursor()
+            
+            query = """
+            SELECT id, username, email, password_hash, full_name, role, is_active
+            FROM users 
+            WHERE username = %s AND is_active = TRUE
+            """
+            cursor.execute(query, (username,))
+            user = cursor.fetchone()
+            
+            if user and bcrypt.checkpw(password.encode('utf-8'), user[3].encode('utf-8')):
+                # Log successful login
+                self.log_activity(user[0], 'LOGIN_SUCCESS', f'User {username} logged in successfully')
+                return user
+            else:
+                # Log failed login attempt
+                self.log_activity(None, 'LOGIN_FAILED', f'Failed login attempt for username: {username}')
+                return None
+                
+        except Error as e:
+            print(f"Error authenticating user: {e}")
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+
+    def get_user_by_id(self, user_id):
+        """Get user information by ID"""
+        try:
+            cursor = self.connection.cursor()
+            
+            query = """
+            SELECT id, username, email, full_name, role, is_active, created_at
+            FROM users 
+            WHERE id = %s
+            """
+            cursor.execute(query, (user_id,))
+            return cursor.fetchone()
+            
+        except Error as e:
+            print(f"Error getting user by ID: {e}")
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+
+    def create_tables(self):
+        """Create all necessary tables"""
+        try:
+            cursor = self.connection.cursor()
+            
+            # Users table
+            cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(50) UNIQUE NOT NULL,
@@ -101,633 +144,600 @@ class Database:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
-            """
-            
-            # Password reset tokens table
-            create_reset_tokens_table = """
-            CREATE TABLE IF NOT EXISTS password_reset_tokens (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                token VARCHAR(255) UNIQUE NOT NULL,
-                expires_at TIMESTAMP NOT NULL,
-                used BOOLEAN DEFAULT FALSE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-            """
-            
-            # System settings table
-            create_settings_table = """
-            CREATE TABLE IF NOT EXISTS system_settings (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                setting_key VARCHAR(100) UNIQUE NOT NULL,
-                setting_value TEXT,
-                description TEXT,
-                updated_by INT,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (updated_by) REFERENCES users(id)
-            )
-            """
-            
-            # Rooms configuration table
-            create_rooms_config_table = """
-            CREATE TABLE IF NOT EXISTS rooms_config (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                room_number VARCHAR(50) NOT NULL,
-                building VARCHAR(100),
-                room_rows INT NOT NULL,
-                room_columns INT NOT NULL,
-                allowed_branches TEXT,
-                is_active BOOLEAN DEFAULT TRUE,
-                created_by INT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (created_by) REFERENCES users(id)
-            )
-            """
+            """)
             
             # Students table
-            create_students_table = """
+            cursor.execute("""
             CREATE TABLE IF NOT EXISTS students (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                roll_number VARCHAR(50) UNIQUE NOT NULL,
+                student_id VARCHAR(20) UNIQUE NOT NULL,
                 name VARCHAR(100) NOT NULL,
-                branch VARCHAR(50) NOT NULL,
-                section VARCHAR(10),
-                is_detained BOOLEAN DEFAULT FALSE,
-                email VARCHAR(100),
+                program VARCHAR(50),
+                year INT,
+                semester INT,
+                detained BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """
+            """)
             
-            # PDF History table (enhanced)
-            create_pdf_history_table = """
+            # PDF History table - updated with pdf_path column
+            cursor.execute("""
             CREATE TABLE IF NOT EXISTS pdf_history (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 filename VARCHAR(255) NOT NULL,
-                file_path VARCHAR(500) NOT NULL,
-                student_count INT NOT NULL,
-                room_count INT NOT NULL,
-                students_per_desk INT NOT NULL,
-                include_detained BOOLEAN NOT NULL,
-                building VARCHAR(100),
-                plan_details TEXT,
+                pdf_path VARCHAR(500),
+                student_count INT DEFAULT 0,
+                room_count INT DEFAULT 0,
+                students_per_desk INT DEFAULT 1,
+                include_detained BOOLEAN DEFAULT FALSE,
+                building VARCHAR(100) DEFAULT 'Main Building',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )
-            """
+            """)
             
             # Activity logs table
-            create_activity_logs_table = """
+            cursor.execute("""
             CREATE TABLE IF NOT EXISTS activity_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT,
                 action VARCHAR(100) NOT NULL,
-                details TEXT,
+                description TEXT,
                 ip_address VARCHAR(45),
                 user_agent TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
             )
-            """
+            """)
             
-            # Login attempts table
-            create_login_attempts_table = """
-            CREATE TABLE IF NOT EXISTS login_attempts (
+            # Settings table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS settings (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(50),
-                ip_address VARCHAR(45),
-                success BOOLEAN NOT NULL,
-                attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                setting_key VARCHAR(100) UNIQUE NOT NULL,
+                setting_value TEXT,
+                updated_by INT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
             )
-            """
+            """)
             
-            # Email notifications table
-            create_notifications_table = """
-            CREATE TABLE IF NOT EXISTS email_notifications (
+            # Password reset tokens table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT,
-                recipient_email VARCHAR(100) NOT NULL,
-                subject VARCHAR(255) NOT NULL,
-                body TEXT NOT NULL,
-                sent BOOLEAN DEFAULT FALSE,
-                sent_at TIMESTAMP NULL,
+                user_id INT NOT NULL,
+                token VARCHAR(255) NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                used BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )
-            """
+            """)
             
-            # Execute table creation
-            cursor.execute(create_users_table)
-            cursor.execute(create_reset_tokens_table)
-            cursor.execute(create_settings_table)
-            cursor.execute(create_rooms_config_table)
-            cursor.execute(create_students_table)
-            cursor.execute(create_pdf_history_table)
-            cursor.execute(create_activity_logs_table)
-            cursor.execute(create_login_attempts_table)
-            cursor.execute(create_notifications_table)
+            # Check if pdf_path column exists, if not add it
+            cursor.execute("""
+            SELECT COUNT(*) as count
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'pdf_history' 
+            AND COLUMN_NAME = 'pdf_path'
+            """)
+            
+            result = cursor.fetchone()
+            if result[0] == 0:
+                cursor.execute("""
+                ALTER TABLE pdf_history 
+                ADD COLUMN pdf_path VARCHAR(500) AFTER filename
+                """)
+                print("Added pdf_path column to pdf_history table")
             
             self.connection.commit()
-            
-            # Create default admin user and settings
-            self.create_default_admin()
-            self.create_default_settings()
-            
+            cursor.close()
+            print("Database tables created/updated successfully.")
             return True
-        except Error as e:
+            
+        except Exception as e:
             print(f"Error creating tables: {e}")
             return False
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def create_default_admin(self):
-        """Create a default admin user"""
-        try:
-            cursor = self.connection.cursor()
-            
-            # Check if admin user exists
-            cursor.execute("SELECT id FROM users WHERE username = 'admin'")
-            if cursor.fetchone():
-                return  # Admin already exists
-            
-            # Create admin user
-            password_hash = bcrypt.hashpw('admin123'.encode('utf-8'), bcrypt.gensalt())
-            
-            insert_query = """
-            INSERT INTO users (username, email, password_hash, full_name, role)
-            VALUES (%s, %s, %s, %s, %s)
-            """
-            
-            cursor.execute(insert_query, ('admin', 'admin@example.com', password_hash, 'Administrator', 'admin'))
-            self.connection.commit()
-            
-        except Error as e:
-            print(f"Error creating default admin: {e}")
-        finally:
-            if cursor:
-                cursor.close()
-                
-    def create_default_settings(self):
-        """Create default system settings"""
-        try:
-            cursor = self.connection.cursor()
-            
-            default_settings = [
-                ('students_per_desk', '1', 'Default number of students per desk'),
-                ('include_detained', 'false', 'Include detained students in seating plans by default'),
-                ('default_building', 'Main Building', 'Default building for seating arrangements'),
-                ('session_timeout', '3600', 'Session timeout in seconds'),
-                ('max_login_attempts', '5', 'Maximum login attempts before account lockout'),
-                ('email_notifications', 'true', 'Enable email notifications'),
-                ('password_min_length', '6', 'Minimum password length'),
-                ('pdf_retention_days', '30', 'Number of days to retain PDF files')
-            ]
-            
-            for key, value, description in default_settings:
-                cursor.execute(
-                    "INSERT IGNORE INTO system_settings (setting_key, setting_value, description) VALUES (%s, %s, %s)",
-                    (key, value, description)
-                )
-            
-            self.connection.commit()
-            
-        except Error as e:
-            print(f"Error creating default settings: {e}")
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def authenticate_user(self, username, password):
-        """Authenticate user login with enhanced security"""
-        try:
-            cursor = self.connection.cursor(dictionary=True)
-            
-            # Log login attempt
-            self.log_login_attempt(username, success=False)  # Will update to True if successful
-            
-            cursor.execute(
-                "SELECT id, username, password_hash, full_name, role, is_active FROM users WHERE username = %s OR email = %s", 
-                (username, username)
-            )
-            user = cursor.fetchone()
-            
-            if user and user['is_active'] and bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
-                # Update login attempt to success
-                self.log_login_attempt(username, success=True)
-                
-                # Log successful login activity
-                self.log_activity(user['id'], 'LOGIN', f"User {username} logged in successfully")
-                
-                return {
-                    'id': user['id'],
-                    'username': user['username'],
-                    'full_name': user['full_name'],
-                    'role': user['role']
-                }
-            
-            # Log failed login activity
-            self.log_activity(None, 'LOGIN_FAILED', f"Failed login attempt for username: {username}")
-            return None
-            
-        except Error as e:
-            print(f"Error authenticating user: {e}")
-            return None
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def create_user(self, username, email, password, full_name, role='student'):
-        """Create a new user with enhanced validation"""
-        try:
-            cursor = self.connection.cursor()
-            
-            # Check if username or email already exists
-            cursor.execute("SELECT id FROM users WHERE username = %s OR email = %s", (username, email))
-            if cursor.fetchone():
-                return False, "Username or email already exists"
-            
-            # Validate password strength
-            if len(password) < int(self.get_setting('password_min_length', '6')):
-                return False, f"Password must be at least {self.get_setting('password_min_length', '6')} characters long"
-            
-            # Hash password
-            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-            
-            # Insert new user
-            insert_query = """
-            INSERT INTO users (username, email, password_hash, full_name, role)
-            VALUES (%s, %s, %s, %s, %s)
-            """
-            
-            cursor.execute(insert_query, (username, email, password_hash, full_name, role))
-            self.connection.commit()
-            
-            # Log user creation activity
-            user_id = cursor.lastrowid
-            self.log_activity(user_id, 'USER_CREATED', f"New user {username} created with role {role}")
-            
-            return True, "User created successfully"
-            
-        except Error as e:
-            print(f"Error creating user: {e}")
-            return False, f"Error creating user: {e}"
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def save_pdf_history(self, user_id, filename, file_path, student_count, room_count, students_per_desk, include_detained, building=None):
+
+    def save_pdf_history(self, user_id, filename, pdf_path, student_count, room_count, students_per_desk, include_detained, building):
         """Save PDF generation history"""
         try:
             cursor = self.connection.cursor()
-            
-            insert_query = """
-            INSERT INTO pdf_history (user_id, filename, file_path, student_count, room_count, students_per_desk, include_detained, building)
+            query = """
+            INSERT INTO pdf_history (user_id, filename, pdf_path, student_count, room_count, 
+                                   students_per_desk, include_detained, building)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            
-            cursor.execute(insert_query, (user_id, filename, file_path, student_count, room_count, students_per_desk, include_detained, building))
+            cursor.execute(query, (user_id, filename, pdf_path, student_count, room_count, 
+                                 students_per_desk, include_detained, building))
             self.connection.commit()
-            
-            # Log PDF generation activity
-            self.log_activity(user_id, 'PDF_GENERATED', f"PDF {filename} generated with {student_count} students in {room_count} rooms")
-            
+            cursor.close()
             return True
-        except Error as e:
+        except Exception as e:
             print(f"Error saving PDF history: {e}")
             return False
-        finally:
-            if cursor:
-                cursor.close()
-    
+
     def get_user_pdf_history(self, user_id):
-        """Get PDF history for a user"""
+        """Get PDF history for a specific user"""
         try:
             cursor = self.connection.cursor(dictionary=True)
-            
             query = """
-            SELECT id, filename, student_count, room_count, students_per_desk, include_detained, building, created_at
-            FROM pdf_history
-            WHERE user_id = %s
+            SELECT id, filename, pdf_path, student_count, room_count, 
+                   students_per_desk, building, created_at
+            FROM pdf_history 
+            WHERE user_id = %s 
             ORDER BY created_at DESC
             """
-            
             cursor.execute(query, (user_id,))
-            return cursor.fetchall()
-        except Error as e:
-            print(f"Error getting PDF history: {e}")
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except Exception as e:
+            print(f"Error fetching PDF history: {e}")
             return []
-        finally:
-            if cursor:
-                cursor.close()
-    
+
     def get_pdf_file_path(self, pdf_id, user_id):
-        """Get PDF file path for download"""
+        """Get PDF file path by ID and user ID"""
         try:
             cursor = self.connection.cursor()
-            
-            cursor.execute("SELECT file_path FROM pdf_history WHERE id = %s AND user_id = %s", (pdf_id, user_id))
+            query = "SELECT pdf_path FROM pdf_history WHERE id = %s AND user_id = %s"
+            cursor.execute(query, (pdf_id, user_id))
             result = cursor.fetchone()
-            
+            cursor.close()
             return result[0] if result else None
-        except Error as e:
-            print(f"Error getting PDF file path: {e}")
+        except Exception as e:
+            print(f"Error fetching PDF file path: {e}")
             return None
-        finally:
-            if cursor:
-                cursor.close()
-    
-    # Additional methods for enhanced functionality
+
+    def get_all_student_emails(self):
+        """Get all student email addresses"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT email FROM users WHERE role = 'student' AND is_active = TRUE"
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            return [row[0] for row in results]
+        except Exception as e:
+            print(f"Error fetching student emails: {e}")
+            return []
+
+    def send_email(self, to_email, subject, body, pdf_path=None):
+        """Send email notification (placeholder implementation)"""
+        try:
+            # This is a placeholder implementation
+            # In a real application, you would integrate with an email service like:
+            # - SMTP
+            # - SendGrid
+            # - AWS SES
+            # - etc.
+            
+            print(f"Email would be sent to: {to_email}")
+            print(f"Subject: {subject}")
+            print(f"Body: {body[:100]}...")
+            if pdf_path:
+                print(f"Attachment: {pdf_path}")
+            
+            # For demonstration, we'll return success
+            return True, None
+            
+        except Exception as e:
+            return False, str(e)
+
     def log_activity(self, user_id, action, details, ip_address=None, user_agent=None):
         """Log user activity"""
         try:
             cursor = self.connection.cursor()
             
-            insert_query = """
+            query = """
             INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent)
             VALUES (%s, %s, %s, %s, %s)
             """
-            
-            cursor.execute(insert_query, (user_id, action, details, ip_address, user_agent))
+            cursor.execute(query, (user_id, action, details, ip_address, user_agent))
             self.connection.commit()
             
         except Error as e:
             print(f"Error logging activity: {e}")
+            self.connection.rollback()
         finally:
             if cursor:
                 cursor.close()
-    
-    def log_login_attempt(self, username, success=False, ip_address=None):
-        """Log login attempts"""
-        try:
-            cursor = self.connection.cursor()
-            
-            insert_query = """
-            INSERT INTO login_attempts (username, ip_address, success)
-            VALUES (%s, %s, %s)
-            """
-            
-            cursor.execute(insert_query, (username, ip_address, success))
-            self.connection.commit()
-            
-        except Error as e:
-            print(f"Error logging login attempt: {e}")
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def get_setting(self, key, default_value=None):
-        """Get system setting value"""
-        try:
-            cursor = self.connection.cursor()
-            
-            cursor.execute("SELECT setting_value FROM system_settings WHERE setting_key = %s", (key,))
-            result = cursor.fetchone()
-            
-            return result[0] if result else default_value
-        except Error as e:
-            print(f"Error getting setting: {e}")
-            return default_value
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def update_setting(self, key, value, user_id=None):
-        """Update system setting"""
-        try:
-            cursor = self.connection.cursor()
-            
-            update_query = """
-            UPDATE system_settings 
-            SET setting_value = %s, updated_by = %s, updated_at = NOW()
-            WHERE setting_key = %s
-            """
-            
-            cursor.execute(update_query, (value, user_id, key))
-            self.connection.commit()
-            
-            return cursor.rowcount > 0
-        except Error as e:
-            print(f"Error updating setting: {e}")
-            return False
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def change_password(self, user_id, old_password, new_password):
-        """Change user password"""
-        try:
-            cursor = self.connection.cursor()
-            
-            # Verify old password
-            cursor.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
-            result = cursor.fetchone()
-            
-            if not result or not bcrypt.checkpw(old_password.encode('utf-8'), result[0].encode('utf-8')):
-                return False, "Current password is incorrect"
-            
-            # Validate new password
-            if len(new_password) < int(self.get_setting('password_min_length', '6')):
-                return False, f"Password must be at least {self.get_setting('password_min_length', '6')} characters long"
-            
-            # Update password
-            new_password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
-            
-            cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_password_hash, user_id))
-            self.connection.commit()
-            
-            # Log activity
-            self.log_activity(user_id, 'PASSWORD_CHANGED', 'User changed password')
-            
-            return True, "Password changed successfully"
-            
-        except Error as e:
-            print(f"Error changing password: {e}")
-            return False, f"Error changing password: {e}"
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def create_password_reset_token(self, email):
-        """Create password reset token"""
-        try:
-            cursor = self.connection.cursor()
-            
-            # Check if user exists
-            cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
-            user = cursor.fetchone()
-            
-            if not user:
-                return False, "Email not found"
-            
-            user_id = user[0]
-            
-            # Generate token
-            token = secrets.token_urlsafe(32)
-            expires_at = datetime.now() + timedelta(hours=1)
-            
-            # Save token
-            insert_query = """
-            INSERT INTO password_reset_tokens (user_id, token, expires_at)
-            VALUES (%s, %s, %s)
-            """
-            
-            cursor.execute(insert_query, (user_id, token, expires_at))
-            self.connection.commit()
-            
-            # Log activity
-            self.log_activity(user_id, 'PASSWORD_RESET_REQUESTED', 'Password reset token generated')
-            
-            return True, token
-            
-        except Error as e:
-            print(f"Error creating reset token: {e}")
-            return False, f"Error creating reset token: {e}"
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def reset_password_with_token(self, token, new_password):
-        """Reset password using token"""
-        try:
-            cursor = self.connection.cursor()
-            
-            # Verify token
-            cursor.execute("""
-                SELECT user_id FROM password_reset_tokens 
-                WHERE token = %s AND expires_at > NOW() AND used = FALSE
-            """, (token,))
-            
-            result = cursor.fetchone()
-            if not result:
-                return False, "Invalid or expired token"
-            
-            user_id = result[0]
-            
-            # Validate new password
-            if len(new_password) < int(self.get_setting('password_min_length', '6')):
-                return False, f"Password must be at least {self.get_setting('password_min_length', '6')} characters long"
-            
-            # Update password
-            new_password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
-            
-            cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_password_hash, user_id))
-            
-            # Mark token as used
-            cursor.execute("UPDATE password_reset_tokens SET used = TRUE WHERE token = %s", (token,))
-            
-            self.connection.commit()
-            
-            # Log activity
-            self.log_activity(user_id, 'PASSWORD_RESET', 'Password reset using token')
-            
-            return True, "Password reset successfully"
-            
-        except Error as e:
-            print(f"Error resetting password: {e}")
-            return False, f"Error resetting password: {e}"
-        finally:
-            if cursor:
-                cursor.close()
-    
-    def send_email(self, to_email, subject, body, pdf_path=None):
-        """Send email notification, optionally with PDF attachment. Returns (success, error_message)"""
-        try:
-            from email.mime.base import MIMEBase
-            from email import encoders
-            msg = MIMEMultipart()
-            msg['From'] = self.email_username
-            msg['To'] = to_email
-            msg['Subject'] = subject
 
-            msg.attach(MIMEText(body, 'html'))
-
-            # Attach PDF if provided
-            if pdf_path and os.path.exists(pdf_path):
-                with open(pdf_path, 'rb') as f:
-                    part = MIMEBase('application', 'octet-stream')
-                    part.set_payload(f.read())
-                encoders.encode_base64(part)
-                part.add_header('Content-Disposition', f'attachment; filename="{os.path.basename(pdf_path)}"')
-                msg.attach(part)
-
-            server = smtplib.SMTP(self.smtp_server, self.smtp_port)
-            server.starttls()
-            server.login(self.email_username, self.email_password)
-
-            text = msg.as_string()
-            server.sendmail(self.email_username, to_email, text)
-            server.quit()
-
-            return True, None
-        except Exception as e:
-            print(f"Error sending email: {e}")
-            return False, str(e)
-    
-    def get_users_by_role(self, role=None):
-        """Get users filtered by role"""
+    def get_students(self, include_detained=False):
+        """Get all students"""
         try:
-            cursor = self.connection.cursor(dictionary=True)
+            cursor = self.connection.cursor()
             
-            if role:
-                cursor.execute("SELECT id, username, email, full_name, role, is_active, created_at FROM users WHERE role = %s", (role,))
+            if include_detained:
+                query = "SELECT roll_number, name, branch, section, is_detained, email FROM students ORDER BY roll_number"
             else:
-                cursor.execute("SELECT id, username, email, full_name, role, is_active, created_at FROM users")
+                query = "SELECT roll_number, name, branch, section, is_detained, email FROM students WHERE is_detained = FALSE ORDER BY roll_number"
             
+            cursor.execute(query)
             return cursor.fetchall()
+            
         except Error as e:
-            print(f"Error getting users: {e}")
+            print(f"Error getting students: {e}")
             return []
         finally:
             if cursor:
                 cursor.close()
-    
-    def update_user_role(self, user_id, new_role, updated_by):
-        """Update user role"""
+
+    def get_setting(self, key, default_value=None):
+        """Get system setting"""
         try:
             cursor = self.connection.cursor()
             
-            cursor.execute("UPDATE users SET role = %s WHERE id = %s", (new_role, user_id))
+            query = "SELECT setting_value FROM system_settings WHERE setting_key = %s"
+            cursor.execute(query, (key,))
+            result = cursor.fetchone()
+            
+            return result[0] if result else default_value
+            
+        except Error as e:
+            print(f"Error getting setting {key}: {e}")
+            return default_value
+        finally:
+            if cursor:
+                cursor.close()
+
+    def set_setting(self, key, value, description=None):
+        """Set system setting"""
+        try:
+            cursor = self.connection.cursor()
+            
+            query = """
+            INSERT INTO system_settings (setting_key, setting_value, description)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+            setting_value = VALUES(setting_value),
+            description = VALUES(description)
+            """
+            cursor.execute(query, (key, value, description))
             self.connection.commit()
             
-            # Log activity
-            self.log_activity(updated_by, 'ROLE_UPDATED', f"User {user_id} role changed to {new_role}")
+            return True
             
-            return cursor.rowcount > 0
         except Error as e:
-            print(f"Error updating user role: {e}")
+            print(f"Error setting {key}: {e}")
+            self.connection.rollback()
             return False
         finally:
             if cursor:
                 cursor.close()
-    
-    def get_activity_logs(self, user_id=None, limit=100):
-        """Get activity logs"""
+
+    def get_dashboard_stats(self, user_id=None):
+        """Get dashboard statistics"""
         try:
-            cursor = self.connection.cursor(dictionary=True)
+            cursor = self.connection.cursor()
+            stats = {}
             
+            print(f"Getting dashboard stats for user_id: {user_id}")
+            
+            # Total students
+            cursor.execute("SELECT COUNT(*) FROM students")
+            result = cursor.fetchone()
+            stats['total_students'] = result[0] if result else 0
+            
+            # Students by branch
+            cursor.execute("SELECT branch, COUNT(*) FROM students GROUP BY branch")
+            branch_data = cursor.fetchall()
+            stats['students_by_branch'] = dict(branch_data) if branch_data else {}
+            
+            # Total PDFs generated
             if user_id:
-                cursor.execute("""
-                    SELECT al.*, u.username 
-                    FROM activity_logs al 
-                    LEFT JOIN users u ON al.user_id = u.id 
-                    WHERE al.user_id = %s 
-                    ORDER BY al.created_at DESC 
-                    LIMIT %s
-                """, (user_id, limit))
+                cursor.execute("SELECT COUNT(*) FROM pdf_history WHERE user_id = %s", (user_id,))
             else:
-                cursor.execute("""
-                    SELECT al.*, u.username 
-                    FROM activity_logs al 
-                    LEFT JOIN users u ON al.user_id = u.id 
-                    ORDER BY al.created_at DESC 
-                    LIMIT %s
-                """, (limit,))
+                cursor.execute("SELECT COUNT(*) FROM pdf_history")
+            result = cursor.fetchone()
+            stats['total_pdfs'] = result[0] if result else 0
             
-            return cursor.fetchall()
+            # Recent activity count
+            if user_id:
+                cursor.execute("SELECT COUNT(*) FROM activity_logs WHERE user_id = %s", (user_id,))
+            else:
+                cursor.execute("SELECT COUNT(*) FROM activity_logs")
+            result = cursor.fetchone()
+            stats['total_activities'] = result[0] if result else 0
+            
+            # Total users (admin only)
+            if not user_id:
+                cursor.execute("SELECT COUNT(*) FROM users WHERE is_active = TRUE")
+                result = cursor.fetchone()
+                stats['total_users'] = result[0] if result else 0
+            
+            return stats
+            
+        except Error as e:
+            print(f"Error getting dashboard stats: {e}")
+            return {
+                'total_students': 0,
+                'total_pdfs': 0,
+                'total_activities': 0,
+                'total_users': 0,
+                'students_by_branch': {}
+            }
+        finally:
+            if cursor:
+                cursor.close()
+
+    def get_system_stats(self):
+        """Get comprehensive system statistics for admin dashboard"""
+        try:
+            cursor = self.connection.cursor()
+            stats = {}
+            
+            # User statistics
+            cursor.execute("SELECT role, COUNT(*) FROM users WHERE is_active = TRUE GROUP BY role")
+            user_roles_data = cursor.fetchall()
+            stats['user_roles'] = dict(user_roles_data) if user_roles_data else {}
+            
+            cursor.execute("SELECT COUNT(*) FROM users WHERE is_active = TRUE")
+            result = cursor.fetchone()
+            stats['total_users'] = result[0] if result else 0
+            
+            # Student statistics
+            cursor.execute("SELECT COUNT(*) FROM students")
+            result = cursor.fetchone()
+            stats['total_students'] = result[0] if result else 0
+            
+            cursor.execute("SELECT COUNT(*) FROM students WHERE is_detained = TRUE")
+            result = cursor.fetchone()
+            stats['detained_students'] = result[0] if result else 0
+            
+            cursor.execute("SELECT branch, COUNT(*) FROM students GROUP BY branch")
+            branch_data = cursor.fetchall()
+            stats['students_by_branch'] = dict(branch_data) if branch_data else {}
+            
+            # PDF generation statistics
+            cursor.execute("SELECT COUNT(*) FROM pdf_history")
+            result = cursor.fetchone()
+            stats['total_pdfs'] = result[0] if result else 0
+            
+            # Activity statistics
+            cursor.execute("SELECT COUNT(*) FROM activity_logs")
+            result = cursor.fetchone()
+            stats['total_activities'] = result[0] if result else 0
+            
+            return stats
+            
+        except Error as e:
+            print(f"Error getting system stats: {e}")
+            return {
+                'total_users': 0,
+                'total_students': 0,
+                'total_pdfs': 0,
+                'total_activities': 0,
+                'detained_students': 0,
+                'user_roles': {},
+                'students_by_branch': {}
+            }
+        finally:
+            if cursor:
+                cursor.close()
+
+    def get_recent_activities(self, limit=50):
+        """Get recent activities for dashboard"""
+        try:
+            cursor = self.connection.cursor()
+            query = """
+            SELECT al.id, u.username, u.full_name, al.action, al.details, 
+                   al.ip_address, al.created_at
+            FROM activity_logs al
+            LEFT JOIN users u ON al.user_id = u.id
+            ORDER BY al.created_at DESC 
+            LIMIT %s
+            """
+            cursor.execute(query, (limit,))
+            
+            activities = []
+            for row in cursor.fetchall():
+                activities.append({
+                    'id': row[0],
+                    'username': row[1] or 'System',
+                    'full_name': row[2] or 'System',
+                    'action': row[3] or 'Unknown Action',
+                    'details': row[4] or 'No details',
+                    'ip_address': row[5] or 'Unknown IP',
+                    'created_at': row[6]
+                })
+            
+            return activities
+            
+        except Error as e:
+            print(f"Error getting recent activities: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+
+    def get_activity_logs(self, user_id, limit=50):
+        """Get activity logs for specific user"""
+        try:
+            cursor = self.connection.cursor()
+            query = """
+            SELECT id, action, details, ip_address, created_at
+            FROM activity_logs 
+            WHERE user_id = %s
+            ORDER BY created_at DESC 
+            LIMIT %s
+            """
+            cursor.execute(query, (user_id, limit))
+            
+            activities = []
+            for row in cursor.fetchall():
+                activities.append({
+                    'id': row[0],
+                    'action': row[1] or 'Unknown Action',
+                    'details': row[2] or 'No details',
+                    'ip_address': row[3] or 'Unknown IP',
+                    'created_at': row[4]
+                })
+            
+            return activities
+            
         except Error as e:
             print(f"Error getting activity logs: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+
+    def import_students_from_csv(self, csv_file_path, import_mode='update_or_insert'):
+        """Import students from CSV file with duplicate handling"""
+        try:
+            cursor = self.connection.cursor()
+            
+            if import_mode == 'clear_all':
+                cursor.execute("DELETE FROM students")
+                print("Cleared existing students from database")
+            
+            with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                students_imported = 0
+                students_updated = 0
+                students_skipped = 0
+                
+                for row in reader:
+                    roll_number = row.get('roll_number', '').strip()
+                    name = row.get('name', '').strip()
+                    branch = row.get('branch', '').strip()
+                    section = row.get('section', '').strip()
+                    is_detained = row.get('is_detained', 'FALSE').upper() == 'TRUE'
+                    email = row.get('email', '').strip()
+                    
+                    if not roll_number:
+                        continue
+                    
+                    if import_mode == 'skip_duplicates':
+                        cursor.execute("SELECT id FROM students WHERE roll_number = %s", (roll_number,))
+                        if cursor.fetchone():
+                            students_skipped += 1
+                            continue
+                        
+                        query = """
+                        INSERT INTO students (roll_number, name, branch, section, is_detained, email)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """
+                        cursor.execute(query, (roll_number, name, branch, section, is_detained, email))
+                        students_imported += 1
+                        
+                    elif import_mode == 'update_or_insert':
+                        query = """
+                        INSERT INTO students (roll_number, name, branch, section, is_detained, email)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        ON DUPLICATE KEY UPDATE
+                        name = VALUES(name),
+                        branch = VALUES(branch),
+                        section = VALUES(section),
+                        is_detained = VALUES(is_detained),
+                        email = VALUES(email)
+                        """
+                        cursor.execute(query, (roll_number, name, branch, section, is_detained, email))
+                        
+                        if cursor.lastrowid > 0:
+                            students_imported += 1
+                        else:
+                            students_updated += 1
+                            
+                    else:  # clear_all mode
+                        query = """
+                        INSERT INTO students (roll_number, name, branch, section, is_detained, email)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """
+                        cursor.execute(query, (roll_number, name, branch, section, is_detained, email))
+                        students_imported += 1
+                
+                self.connection.commit()
+                
+                if import_mode == 'update_or_insert':
+                    message = f"Successfully processed students: {students_imported} new, {students_updated} updated"
+                elif import_mode == 'skip_duplicates':
+                    message = f"Successfully imported {students_imported} students, skipped {students_skipped} duplicates"
+                else:
+                    message = f"Successfully imported {students_imported} students"
+                
+                print(message)
+                return True, message
+                
+        except Error as e:
+            print(f"Error importing students: {e}")
+            self.connection.rollback()
+            return False, f"Database error: {str(e)}"
+        except Exception as e:
+            print(f"Error importing students: {e}")
+            return False, f"File error: {str(e)}"
+        finally:
+            if cursor:
+                cursor.close()
+
+    def get_duplicate_students(self, csv_file_path):
+        """Check for duplicate roll numbers in CSV vs database"""
+        try:
+            cursor = self.connection.cursor()
+            
+            cursor.execute("SELECT roll_number FROM students")
+            existing_rolls = set(row[0] for row in cursor.fetchall())
+            
+            duplicates = []
+            with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row_num, row in enumerate(reader, start=2):
+                    roll_number = row.get('roll_number', '').strip()
+                    if roll_number and roll_number in existing_rolls:
+                        duplicates.append({
+                            'row': row_num,
+                            'roll_number': roll_number,
+                            'name': row.get('name', '').strip(),
+                            'branch': row.get('branch', '').strip(),
+                            'section': row.get('section', '').strip()
+                        })
+            
+            return duplicates
+            
+        except Exception as e:
+            print(f"Error checking duplicates: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+
+    def clear_all_students(self):
+        """Clear all students from database"""
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute("DELETE FROM students")
+            deleted_count = cursor.rowcount
+            self.connection.commit()
+            
+            print(f"Cleared {deleted_count} students from database")
+            return True, f"Cleared {deleted_count} students successfully"
+            
+        except Error as e:
+            print(f"Error clearing students: {e}")
+            self.connection.rollback()
+            return False, f"Database error: {str(e)}"
+        finally:
+            if cursor:
+                cursor.close()
+
+    def get_users_by_role(self):
+        """Get all users grouped by role"""
+        try:
+            cursor = self.connection.cursor()
+            query = """
+            SELECT id, username, email, full_name, role, is_active, created_at
+            FROM users 
+            ORDER BY role, username
+            """
+            cursor.execute(query)
+            return cursor.fetchall()
+            
+        except Error as e:
+            print(f"Error getting users: {e}")
             return []
         finally:
             if cursor:

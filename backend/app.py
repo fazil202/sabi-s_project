@@ -126,15 +126,26 @@ def login():
         if db and db.connection and db.connection.is_connected():
             user = db.authenticate_user(username, password)
             if user:
-                session['logged_in'] = True
-                session['user_id'] = user['id']
-                session['username'] = user['username']
-                session['full_name'] = user['full_name']
-                session['role'] = user['role']
+                # Handle both tuple and dictionary formats
+                if isinstance(user, tuple):
+                    # Assuming tuple format: (id, username, email, full_name, role, ...)
+                    user_id, user_name, email, full_name, role = user[:5]
+                    session['logged_in'] = True
+                    session['user_id'] = user_id
+                    session['username'] = user_name
+                    session['full_name'] = full_name
+                    session['role'] = role
+                elif isinstance(user, dict):
+                    # Dictionary format
+                    session['logged_in'] = True
+                    session['user_id'] = user['id']
+                    session['username'] = user['username']
+                    session['full_name'] = user['full_name']
+                    session['role'] = user['role']
                 
                 # Log successful login
                 if db:
-                    db.log_activity(user['id'], 'LOGIN', f"User {username} logged in", get_client_ip(), get_user_agent())
+                    db.log_activity(session['user_id'], 'LOGIN', f"User {username} logged in", get_client_ip(), get_user_agent())
                 
                 return redirect(url_for('dashboard'))
             else:
@@ -347,42 +358,61 @@ def reset_password_with_token(token):
     return render_template('reset password/reset_password_form.html', token=token)
 
 @app.route('/pdf_history', methods=['GET', 'POST'])
+@require_login
 def pdf_history():
-    if not is_logged_in():
-        return redirect(url_for('login'))
-    
-    if db and db.connection and db.connection.is_connected():
-        user_id = session.get('user_id')
-        pdf_history = db.get_user_pdf_history(user_id)
-        
-        # Calculate totals for stats
-        total_students = sum(pdf['student_count'] for pdf in pdf_history)
-        total_rooms = sum(pdf['room_count'] for pdf in pdf_history)
-        return render_template('pdf history/pdf_history.html', 
-                 pdf_history=pdf_history,
-                 total_students=total_students,
-                 total_rooms=total_rooms)
-    else:
+    if not db or not db.connection or not db.connection.is_connected():
         flash('Database not available.')
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
+    
+    try:
+        # Ensure tables are properly created/updated
+        db.create_tables()
+        
+        # Get PDF history from database
+        user_id = session.get('user_id')
+        pdf_history_data = db.get_user_pdf_history(user_id)
+        
+        # Calculate stats
+        total_students = sum(pdf.get('student_count', 0) for pdf in pdf_history_data)
+        total_rooms = sum(pdf.get('room_count', 0) for pdf in pdf_history_data)
+        
+        # Log activity
+        db.log_activity(user_id, 'PDF_HISTORY_VIEW', "User viewed PDF history")
+        
+        return render_template('pdf history/pdf_history.html',
+                             pdf_history=pdf_history_data,
+                             total_students=total_students,
+                             total_rooms=total_rooms)
+    
+    except Exception as e:
+        app.logger.error(f"Error fetching PDF history: {e}")
+        print(f"Error fetching PDF history: {e}")  # Also print to console
+        flash('Error loading PDF history. Please try again.')
+        return redirect(url_for('dashboard'))
 
 @app.route('/download_history_pdf/<int:pdf_id>')
+@require_login
 def download_history_pdf(pdf_id):
-    if not is_logged_in():
-        return redirect(url_for('login'))
+    if not db or not db.connection or not db.connection.is_connected():
+        flash('Database not available.')
+        return redirect(url_for('pdf_history'))
     
-    if db and db.connection and db.connection.is_connected():
+    try:
         user_id = session.get('user_id')
         file_path = db.get_pdf_file_path(pdf_id, user_id)
         
         if file_path and os.path.exists(file_path):
+            # Log download activity
+            db.log_activity(user_id, 'PDF_DOWNLOAD', f"Downloaded PDF ID: {pdf_id}")
             return send_file(file_path, as_attachment=True)
         else:
             flash('PDF file not found.')
             return redirect(url_for('pdf_history'))
-    else:
-        flash('Database not available.')
-        return redirect(url_for('index'))
+    
+    except Exception as e:
+        app.logger.error(f"Error downloading PDF {pdf_id}: {e}")
+        flash('Error downloading PDF file.')
+        return redirect(url_for('pdf_history'))
 
 @app.route('/', methods=['GET', 'POST'])
 @require_login
