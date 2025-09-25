@@ -292,6 +292,24 @@ class Database:
             print(f"Error fetching PDF file path: {e}")
             return None
 
+    def get_users_by_role(self, role=None):
+        """Get all users or users filtered by role"""
+        try:
+            cursor = self.connection.cursor(dictionary=True)
+            if role:
+                query = "SELECT id, username, email, full_name, role, is_active, created_at FROM users WHERE role = %s AND is_active = TRUE ORDER BY created_at DESC"
+                cursor.execute(query, (role,))
+            else:
+                query = "SELECT id, username, email, full_name, role, is_active, created_at FROM users WHERE is_active = TRUE ORDER BY created_at DESC"
+                cursor.execute(query)
+        
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except Exception as e:
+            print(f"Error fetching users: {e}")
+            return []
+
     def get_all_student_emails(self):
         """Get all student email addresses"""
         try:
@@ -300,30 +318,57 @@ class Database:
             cursor.execute(query)
             results = cursor.fetchall()
             cursor.close()
-            return [row[0] for row in results]
+            return [row[0] for row in results if row[0]]  # Filter out None emails
         except Exception as e:
             print(f"Error fetching student emails: {e}")
             return []
 
+    def get_all_faculty_emails(self):
+        """Get all faculty email addresses"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT email FROM users WHERE role = 'faculty' AND is_active = TRUE"
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            return [row[0] for row in results if row[0]]  # Filter out None emails
+        except Exception as e:
+            print(f"Error fetching faculty emails: {e}")
+            return []
+
+    def get_all_emails_by_role(self, role):
+        """Get all email addresses for a specific role"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT email FROM users WHERE role = %s AND is_active = TRUE AND email IS NOT NULL AND email != ''"
+            cursor.execute(query, (role,))
+            results = cursor.fetchall()
+            cursor.close()
+            
+            emails = [row[0] for row in results if row[0] and '@' in row[0]]
+            print(f"Found {len(emails)} {role} emails from database: {emails}")
+            return emails
+            
+        except Exception as e:
+            print(f"Error fetching {role} emails: {e}")
+            return []
+
     def send_email(self, to_email, subject, body, pdf_path=None):
-        """Send email notification (placeholder implementation)"""
+        """Send email notification - placeholder implementation"""
         try:
             # This is a placeholder implementation
-            # In a real application, you would integrate with an email service like:
-            # - SMTP
-            # - SendGrid
-            # - AWS SES
-            # - etc.
-            
-            print(f"Email would be sent to: {to_email}")
+            # In production, integrate with actual email service
+            print(f"=== EMAIL SIMULATION ===")
+            print(f"To: {to_email}")
             print(f"Subject: {subject}")
             print(f"Body: {body[:100]}...")
             if pdf_path:
                 print(f"Attachment: {pdf_path}")
+            print(f"=== END EMAIL ===")
             
-            # For demonstration, we'll return success
+            # Simulate successful email sending
             return True, None
-            
+        
         except Exception as e:
             return False, str(e)
 
@@ -724,21 +769,88 @@ class Database:
             if cursor:
                 cursor.close()
 
-    def get_users_by_role(self):
-        """Get all users grouped by role"""
+    def get_users_by_role(self, role=None):
+        """Get all users or users filtered by role"""
         try:
-            cursor = self.connection.cursor()
-            query = """
-            SELECT id, username, email, full_name, role, is_active, created_at
-            FROM users 
-            ORDER BY role, username
-            """
-            cursor.execute(query)
-            return cursor.fetchall()
-            
-        except Error as e:
-            print(f"Error getting users: {e}")
+            cursor = self.connection.cursor(dictionary=True)
+            if role:
+                query = "SELECT id, username, email, full_name, role, is_active, created_at FROM users WHERE role = %s AND is_active = TRUE ORDER BY created_at DESC"
+                cursor.execute(query, (role,))
+            else:
+                query = "SELECT id, username, email, full_name, role, is_active, created_at FROM users WHERE is_active = TRUE ORDER BY created_at DESC"
+                cursor.execute(query)
+        
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except Exception as e:
+            print(f"Error fetching users: {e}")
             return []
-        finally:
-            if cursor:
-                cursor.close()
+
+    def get_all_users(self):
+        """Get all users - alias for backward compatibility"""
+        return self.get_users_by_role()
+
+    def get_faculty_users(self):
+        """Get only faculty users"""
+        return self.get_users_by_role('faculty')
+
+    def get_student_users(self):
+        """Get only student users"""
+        return self.get_users_by_role('student')
+
+    def get_admin_users(self):
+        """Get only admin users"""
+        return self.get_users_by_role('admin')
+
+    def get_emails_from_csv_data(self, csv_file_path):
+        """Extract email addresses from uploaded CSV file"""
+        try:
+            import pandas as pd
+            
+            # Read CSV file
+            df = pd.read_csv(csv_file_path)
+            
+            # Debug: print column names and first few rows
+            print(f"CSV columns: {list(df.columns)}")
+            print(f"First 3 rows:\n{df.head(3)}")
+            
+            # Check if email column exists (case insensitive)
+            email_column = None
+            for col in df.columns:
+                if col.lower().strip() in ['email', 'email_id', 'mail', 'e-mail']:
+                    email_column = col
+                    break
+        
+            if email_column:
+                # Get unique, non-null email addresses
+                emails = df[email_column].dropna().unique().tolist()
+                valid_emails = []
+                
+                for email in emails:
+                    email_str = str(email).strip()
+                    # Basic email validation
+                    if '@' in email_str and '.' in email_str and len(email_str) > 5:
+                        valid_emails.append(email_str)
+                
+                print(f"Found {len(valid_emails)} valid emails: {valid_emails}")
+                return valid_emails
+            else:
+                print(f"No email column found. Available columns: {list(df.columns)}")
+                return []
+                
+        except Exception as e:
+            print(f"Error reading emails from CSV: {e}")
+            return []
+
+    def get_student_emails_from_session_file(self, session_file_path):
+        """Get student emails from session stored CSV file"""
+        try:
+            if session_file_path and os.path.exists(session_file_path):
+                return self.get_emails_from_csv_data(session_file_path)
+            else:
+                print(f"Session file not found: {session_file_path}")
+                return []
+        except Exception as e:
+            print(f"Error getting emails from session file: {e}")
+            return []

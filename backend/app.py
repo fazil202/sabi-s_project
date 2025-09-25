@@ -133,7 +133,7 @@ def login():
                     session['logged_in'] = True
                     session['user_id'] = user_id
                     session['username'] = user_name
-                    session['full_name'] = full_name
+                    session['full_name'] = user_name
                     session['role'] = role
                 elif isinstance(user, dict):
                     # Dictionary format
@@ -547,10 +547,12 @@ def download_pdf():
 
         # Send email notification after PDF generation
         email_results = []
-        # Example: send to all faculty (customize as needed)
+        # Get faculty users - fixed method call
         if db and db.connection and db.connection.is_connected():
-            faculty_users = db.get_users_by_role('faculty')
+            all_users = db.get_users_by_role()
+            faculty_users = [user for user in all_users if user.get('role') == 'faculty']
             recipients = [user['email'] for user in faculty_users]
+            
             for email in recipients:
                 subject = "Exam Seating Plan"
                 body = f"""
@@ -564,13 +566,17 @@ def download_pdf():
                     email_results.append(f"Email sent to {email}")
                 else:
                     email_results.append(f"Failed to send email to {email}: {error_msg}")
+        
         if email_results:
             for msg in email_results:
                 flash(msg)
         else:
             flash('No recipients found for email notifications.')
+            
         return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
+        
     except Exception as e:
+        app.logger.error(f"Error generating PDF: {str(e)}")
         flash(f'Error generating PDF: {str(e)}')
         return redirect(url_for('generate_plan'))
 
@@ -581,98 +587,168 @@ def send_email_notifications():
         flash('Database not available.')
         return redirect(url_for('pdf_history'))
     
-    pdf_id = request.form.get('pdf_id')
-    recipient_type = request.form.get('recipient_type')  # 'students', 'faculty', 'both'
+    try:
+        pdf_id = request.form.get('pdf_id')
+        recipient_type = request.form.get('recipient_type')
+        
+        if not pdf_id or not recipient_type:
+            flash('Invalid request parameters.')
+            return redirect(url_for('pdf_history'))
+        
+        # Get PDF details
+        user_id = session.get('user_id')
+        pdf_path = db.get_pdf_file_path(pdf_id, user_id)
+        
+        if not pdf_path or not os.path.exists(pdf_path):
+            flash('PDF file not found.')
+            return redirect(url_for('pdf_history'))
+        
+        # Get email addresses based on recipient type
+        recipients = []
+        
+        # First try to get emails from CSV files (session or sample)
+        csv_emails = []
+        
+        # Try session stored file first
+        last_student_file = session.get('last_student_file')
+        if last_student_file:
+            csv_emails = db.get_student_emails_from_session_file(last_student_file)
+            app.logger.info(f"Found {len(csv_emails)} emails from session file: {last_student_file}")
+        
+        # If no session file or no emails found, try sample file
+        if not csv_emails:
+            sample_file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'samples', 'sample_students.csv')
+            sample_file_path = os.path.abspath(sample_file_path)
+            
+            if os.path.exists(sample_file_path):
+                csv_emails = db.get_emails_from_csv_data(sample_file_path)
+                app.logger.info(f"Found {len(csv_emails)} emails from sample file: {sample_file_path}")
+            else:
+                app.logger.warning(f"Sample file not found: {sample_file_path}")
+        
+        if recipient_type == 'students':
+            # Try database first, then CSV
+            db_emails = db.get_all_emails_by_role('student')
+            if db_emails:
+                recipients = db_emails
+                app.logger.info(f"Using {len(db_emails)} database student emails")
+            else:
+                recipients = csv_emails
+                app.logger.info(f"Using {len(csv_emails)} CSV student emails")
+                
+        elif recipient_type == 'faculty':
+            # Only use database for faculty
+            recipients = db.get_all_emails_by_role('faculty')
+            app.logger.info(f"Using {len(recipients)} database faculty emails")
+            
+        elif recipient_type == 'both':
+            # Get students from CSV or database
+            student_emails = db.get_all_emails_by_role('student')
+            if not student_emails:
+                student_emails = csv_emails
+                
+            # Get faculty from database only
+            faculty_emails = db.get_all_emails_by_role('faculty')
+            recipients = student_emails + faculty_emails
+            
+            app.logger.info(f"Using {len(student_emails)} student + {len(faculty_emails)} faculty emails")
+        
+        # Remove duplicates and filter empty emails
+        recipients = list(set([email for email in recipients if email and email.strip() and '@' in email]))
+        
+        # Debug logging
+        app.logger.info(f"Recipient type: {recipient_type}")
+        app.logger.info(f"Final recipients ({len(recipients)}): {recipients}")
+        
+        if not recipients:
+            error_msg = f'No email addresses found for {recipient_type}.'
+            if recipient_type == 'students':
+                error_msg += ' Ensure your CSV file has an "email" column with valid email addresses.'
+            else:
+                error_msg += ' Ensure database has users with the appropriate role.'
+            
+            flash(error_msg)
+            return redirect(url_for('pdf_history'))
+        
+        # Send emails (simulated)
+        success_count = 0
+        error_count = 0
+        
+        for email in recipients:
+            subject = "Exam Seating Plan Notification"
+            body = f"""
+            <h2>Exam Seating Plan</h2>
+            <p>Dear Student/Faculty,</p>
+            <p>Please find the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.</p>
+            <p>Please review the seating arrangement and contact the administration if you have any questions.</p>
+            <p>Best regards,<br>Exam Management System</p>
+            """
+            
+            success, error_msg = db.send_email(email, subject, body, pdf_path=pdf_path)
+            
+            if success:
+                success_count += 1
+                db.log_activity(user_id, 'EMAIL_SENT', f"Seating plan sent to {email}")
+            else:
+                error_count += 1
+                app.logger.error(f"Failed to send email to {email}: {error_msg}")
+        
+        # Provide feedback to user
+        if success_count > 0:
+            flash(f'Successfully sent {success_count} email notification(s) to: {", ".join(recipients[:3])}{"..." if len(recipients) > 3 else ""}')
+        
+        if success_count == 0:
+            flash('No emails could be sent. Please check the logs.')
+            
+    except Exception as e:
+        app.logger.error(f"Error in send_email_notifications: {e}")
+        flash(f'Error sending email notifications: {str(e)}')
     
-    # Get PDF details
-    user_id = session.get('user_id')
-    pdf_path = db.get_pdf_file_path(pdf_id, user_id)
-    
-    if not pdf_path or not os.path.exists(pdf_path):
-        flash('PDF file not found.')
-        return redirect(url_for('pdf_history'))
-    
-    # Get email addresses based on recipient type
-    recipients = []
-    if recipient_type in ['students', 'both']:
-        recipients.extend(db.get_all_student_emails())
-    if recipient_type in ['faculty', 'both']:
-        faculty_users = db.get_users_by_role('faculty')
-        recipients.extend([user['email'] for user in faculty_users])
-    
-    # Debug: log and show recipients
-    import logging
-    logging.info(f"Email notification recipients: {recipients}")
-    flash(f"Recipients: {', '.join(recipients) if recipients else 'None'}")
-
-    # Send emails (implementation depends on your email setup)
-    email_results = []
-    for email in recipients:
-        subject = "Exam Seating Plan"
-        body = f"""
-        <h2>Exam Seating Plan</h2>
-        <p>Please find attached the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.</p>
-        <p>Best regards,<br>Exam Management System</p>
-        """
-        success, error_msg = db.send_email(email, subject, body, pdf_path=pdf_path)
-        if success:
-            db.log_activity(user_id, 'EMAIL_SENT', f"Seating plan sent to {email}")
-            email_results.append(f"Email sent to {email}")
-        else:
-            email_results.append(f"Failed to send email to {email}: {error_msg}")
-    if email_results:
-        for msg in email_results:
-            flash(msg)
-    else:
-        flash('No recipients found for email notifications.')
     return redirect(url_for('pdf_history'))
 
-# API Endpoints
-@app.route('/api/settings', methods=['GET'])
+# Add debug route to check CSV emails
+@app.route('/debug/csv_emails')
 @require_login
-def api_get_settings():
-    if not db or not db.connection or not db.connection.is_connected():
-        return jsonify({'error': 'Database not available'}), 500
-    
-    settings_keys = [
-        'students_per_desk', 'include_detained', 'default_building',
-        'session_timeout', 'max_login_attempts', 'email_notifications'
-    ]
-    
-    settings = {}
-    for key in settings_keys:
-        settings[key] = db.get_setting(key, '')
-    
-    return jsonify(settings)
+def debug_csv_emails():
+    """Debug route to check CSV email extraction"""
+    try:
+        results = {}
+        
+        # Check session file
+        last_student_file = session.get('last_student_file')
+        if last_student_file:
+            session_emails = db.get_student_emails_from_session_file(last_student_file)
+            results['session_file'] = last_student_file
+            results['session_emails'] = session_emails
+        else:
+            results['session_file'] = 'None'
+            results['session_emails'] = []
+        
+        # Check sample file
+        sample_file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'samples', 'sample_students.csv')
+        sample_file_path = os.path.abspath(sample_file_path)
+        
+        if os.path.exists(sample_file_path):
+            sample_emails = db.get_emails_from_csv_data(sample_file_path)
+            results['sample_file'] = sample_file_path
+            results['sample_emails'] = sample_emails
+        else:
+            results['sample_file'] = f'Not found: {sample_file_path}'
+            results['sample_emails'] = []
+        
+        # Check database emails
+        db_student_emails = db.get_all_emails_by_role('student')
+        db_faculty_emails = db.get_all_emails_by_role('faculty')
+        
+        results['db_student_emails'] = db_student_emails
+        results['db_faculty_emails'] = db_faculty_emails
+        
+        return jsonify(results)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
-@app.route('/api/activity_logs', methods=['GET'])
-@require_role('admin')
-def api_get_activity_logs():
-    if not db or not db.connection or not db.connection.is_connected():
-        return jsonify({'error': 'Database not available'}), 500
-    
-    limit = request.args.get('limit', 50, type=int)
-    user_id = request.args.get('user_id', None, type=int)
-    
-    logs = db.get_activity_logs(user_id, limit)
-    return jsonify(logs)
-
-@app.route('/api/stats', methods=['GET'])
-@require_role('admin')
-def api_get_stats():
-    if not db or not db.connection or not db.connection.is_connected():
-        return jsonify({'error': 'Database not available'}), 500
-    
-    all_users = db.get_users_by_role()
-    stats = {
-        'total_users': len(all_users),
-        'admin_count': len([u for u in all_users if u['role'] == 'admin']),
-        'faculty_count': len([u for u in all_users if u['role'] == 'faculty']),
-        'student_count': len([u for u in all_users if u['role'] == 'student']),
-        'active_users': len([u for u in all_users if u['is_active']])
-    }
-    
-    return jsonify(stats)
+# ...existing code...
 
 if __name__ == '__main__':
     # Initialize database
