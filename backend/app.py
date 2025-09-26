@@ -677,12 +677,15 @@ def send_email_notifications():
         for email in recipients:
             subject = "Exam Seating Plan Notification"
             body = f"""
-            <h2>Exam Seating Plan</h2>
-            <p>Dear Student/Faculty,</p>
-            <p>Please find the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.</p>
-            <p>Please review the seating arrangement and contact the administration if you have any questions.</p>
-            <p>Best regards,<br>Exam Management System</p>
-            """
+Dear Student/Faculty,
+
+Please find the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.
+
+Please review the seating arrangement and contact the administration if you have any questions.
+
+Best regards,
+Exam Management System
+"""
             
             success, error_msg = db.send_email(email, subject, body, pdf_path=pdf_path)
             

@@ -8,7 +8,10 @@ import secrets
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
+import pandas as pd
+from email.mime.base import MIMEBase
+from email import encoders
+import time
 class Database:
     def __init__(self):
         self.host = 'localhost'
@@ -19,8 +22,8 @@ class Database:
         # Email configuration
         self.smtp_server = "smtp.gmail.com"
         self.smtp_port = 587
-        self.email_username = "your_email@gmail.com"
-        self.email_password = "your_app_password"
+        self.email_username = "seatgenerator.gprec@gmail.com"
+        self.email_password = "jhpj lkkv rjmp fzfc"
         
         self.connection = None
         self.connect()
@@ -354,23 +357,148 @@ class Database:
             return []
 
     def send_email(self, to_email, subject, body, pdf_path=None):
-        """Send email notification - placeholder implementation"""
+        """Send email notification with proper SMTP integration and logging"""
         try:
-            # This is a placeholder implementation
-            # In production, integrate with actual email service
-            print(f"=== EMAIL SIMULATION ===")
-            print(f"To: {to_email}")
-            print(f"Subject: {subject}")
-            print(f"Body: {body[:100]}...")
-            if pdf_path:
-                print(f"Attachment: {pdf_path}")
-            print(f"=== END EMAIL ===")
-            
-            # Simulate successful email sending
-            return True, None
-        
+            # Validate email configuration
+            if not all([self.smtp_server, self.smtp_port, self.email_username, self.email_password]):
+                error_msg = "Email configuration incomplete. Please check SMTP settings."
+                self.log_activity(None, 'EMAIL_ERROR', f'Failed to send email to {to_email}: {error_msg}')
+                return False, error_msg
+
+            # Validate recipient email
+            if not to_email or '@' not in to_email:
+                error_msg = f"Invalid recipient email address: {to_email}"
+                self.log_activity(None, 'EMAIL_ERROR', error_msg)
+                return False, error_msg
+
+            # Create message
+            msg = MIMEMultipart()
+            msg['From'] = self.email_username
+            msg['To'] = to_email
+            msg['Subject'] = subject
+
+            # Add body to email
+            msg.attach(MIMEText(body, 'plain'))
+
+            # Add PDF attachment if provided
+            if pdf_path and os.path.exists(pdf_path):
+                try:
+                    with open(pdf_path, "rb") as attachment:
+                        
+                        part = MIMEBase('application', 'octet-stream')
+                        part.set_payload(attachment.read())
+                        encoders.encode_base64(part)
+                        part.add_header(
+                            'Content-Disposition',
+                            f'attachment; filename= {os.path.basename(pdf_path)}'
+                        )
+                        msg.attach(part)
+                        
+                except Exception as e:
+                    error_msg = f"Failed to attach PDF file: {str(e)}"
+                    self.log_activity(None, 'EMAIL_ERROR', f'PDF attachment error for {to_email}: {error_msg}')
+                    print(f"Warning: {error_msg}")
+
+            # Connect to SMTP server and send email
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()  # Enable encryption
+                server.login(self.email_username, self.email_password)
+                
+                # Send email
+                text = msg.as_string()
+                server.sendmail(self.email_username, to_email, text)
+                
+                # Log successful email
+                attachment_info = f" with PDF attachment ({os.path.basename(pdf_path)})" if pdf_path else ""
+                success_msg = f"Email sent successfully to {to_email}{attachment_info}"
+                self.log_activity(None, 'EMAIL_SENT', success_msg)
+                print(success_msg)
+                
+                return True, success_msg
+
+        except smtplib.SMTPAuthenticationError as e:
+            error_msg = f"SMTP Authentication failed. Please check email credentials: {str(e)}"
+            self.log_activity(None, 'EMAIL_ERROR', f'SMTP Auth error for {to_email}: {error_msg}')
+            print(f"Email error: {error_msg}")
+            return False, error_msg
+
+        except smtplib.SMTPRecipientsRefused as e:
+            error_msg = f"Recipient email refused: {to_email}"
+            self.log_activity(None, 'EMAIL_ERROR', f'Recipient refused: {error_msg}')
+            print(f"Email error: {error_msg}")
+            return False, error_msg
+
+        except smtplib.SMTPServerDisconnected as e:
+            error_msg = f"SMTP server disconnected: {str(e)}"
+            self.log_activity(None, 'EMAIL_ERROR', f'SMTP disconnected for {to_email}: {error_msg}')
+            print(f"Email error: {error_msg}")
+            return False, error_msg
+
         except Exception as e:
-            return False, str(e)
+            error_msg = f"Unexpected error sending email to {to_email}: {str(e)}"
+            self.log_activity(None, 'EMAIL_ERROR', error_msg)
+            print(f"Email error: {error_msg}")
+            return False, error_msg
+
+    def send_bulk_email(self, recipient_list, subject, body, pdf_path=None):
+        """Send email to multiple recipients with detailed logging"""
+        try:
+            if not recipient_list:
+                error_msg = "No recipients provided for bulk email"
+                self.log_activity(None, 'EMAIL_ERROR', error_msg)
+                return False, error_msg, []
+
+            successful_emails = []
+            failed_emails = []
+            
+            total_recipients = len(recipient_list)
+            self.log_activity(None, 'EMAIL_BULK_START', f'Starting bulk email to {total_recipients} recipients')
+            
+            for i, email in enumerate(recipient_list, 1):
+                try:
+                    success, message = self.send_email(email, subject, body, pdf_path)
+                    
+                    if success:
+                        successful_emails.append(email)
+                        print(f"[{i}/{total_recipients}] ✓ Sent to {email}")
+                    else:
+                        failed_emails.append({'email': email, 'error': message})
+                        print(f"[{i}/{total_recipients}] ✗ Failed to {email}: {message}")
+                        
+                    # Small delay to avoid overwhelming the SMTP server
+                    time.sleep(0.5)
+                    
+                except Exception as e:
+                    error_msg = f"Exception sending to {email}: {str(e)}"
+                    failed_emails.append({'email': email, 'error': error_msg})
+                    print(f"[{i}/{total_recipients}] ✗ Exception for {email}: {error_msg}")
+
+            # Log bulk email completion
+            success_count = len(successful_emails)
+            failure_count = len(failed_emails)
+            
+            completion_msg = f"Bulk email completed: {success_count} successful, {failure_count} failed out of {total_recipients} total"
+            self.log_activity(None, 'EMAIL_BULK_COMPLETE', completion_msg)
+            
+            if failure_count > 0:
+                failed_list = [f"{item['email']} ({item['error']})" for item in failed_emails[:5]]  # Log first 5 failures
+                failure_details = f"Failed emails: {'; '.join(failed_list)}"
+                if failure_count > 5:
+                    failure_details += f" and {failure_count - 5} more..."
+                self.log_activity(None, 'EMAIL_BULK_FAILURES', failure_details)
+
+            return True, completion_msg, {
+                'successful': successful_emails,
+                'failed': failed_emails,
+                'total': total_recipients,
+                'success_count': success_count,
+                'failure_count': failure_count
+            }
+
+        except Exception as e:
+            error_msg = f"Bulk email process failed: {str(e)}"
+            self.log_activity(None, 'EMAIL_ERROR', error_msg)
+            return False, error_msg, []
 
     def log_activity(self, user_id, action, details, ip_address=None, user_agent=None):
         """Log user activity"""
@@ -631,93 +759,76 @@ class Database:
             if cursor:
                 cursor.close()
 
-    def import_students_from_csv(self, csv_file_path, import_mode='update_or_insert'):
-        """Import students from CSV file with duplicate handling"""
+    def import_students_from_csv(self, csv_file_path):
+        """Import students from CSV file into database"""
         try:
+            import pandas as pd
+            df = pd.read_csv(csv_file_path)
+            
+            # Normalize column names
+            df.columns = df.columns.str.lower().str.strip()
+            
+            # Find detained column
+            detained_column = None
+            for col in df.columns:
+                if 'detained' in col.lower():
+                    detained_column = col
+                    break
+        
             cursor = self.connection.cursor()
+            inserted_count = 0
             
-            if import_mode == 'clear_all':
-                cursor.execute("DELETE FROM students")
-                print("Cleared existing students from database")
-            
-            with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
-                students_imported = 0
-                students_updated = 0
-                students_skipped = 0
-                
-                for row in reader:
-                    roll_number = row.get('roll_number', '').strip()
-                    name = row.get('name', '').strip()
-                    branch = row.get('branch', '').strip()
-                    section = row.get('section', '').strip()
-                    is_detained = row.get('is_detained', 'FALSE').upper() == 'TRUE'
-                    email = row.get('email', '').strip()
+            for _, row in df.iterrows():
+                try:
+                    student_id = str(row.get('roll_number', row.get('id', f'STU_{inserted_count}')))
+                    name = str(row.get('name', 'Unknown'))
+                    program = str(row.get('branch', row.get('department', 'N/A')))
+                    year = int(row.get('year', 1)) if pd.notna(row.get('year')) else 1
+                    semester = int(row.get('semester', 1)) if pd.notna(row.get('semester')) else 1
                     
-                    if not roll_number:
-                        continue
-                    
-                    if import_mode == 'skip_duplicates':
-                        cursor.execute("SELECT id FROM students WHERE roll_number = %s", (roll_number,))
-                        if cursor.fetchone():
-                            students_skipped += 1
-                            continue
-                        
-                        query = """
-                        INSERT INTO students (roll_number, name, branch, section, is_detained, email)
+                    # Handle detained status properly
+                    detained = False
+                    if detained_column and pd.notna(row.get(detained_column)):
+                        detained_value = str(row.get(detained_column)).upper()
+                        detained = detained_value in ['TRUE', '1', 'YES', 'Y']
+                
+                    # Check if student already exists
+                    check_query = "SELECT id FROM students WHERE student_id = %s"
+                    cursor.execute(check_query, (student_id,))
+                
+                    if cursor.fetchone():
+                        # Update existing student
+                        update_query = """
+                        UPDATE students 
+                        SET name = %s, program = %s, year = %s, semester = %s, detained = %s
+                        WHERE student_id = %s
+                        """
+                        cursor.execute(update_query, (name, program, year, semester, detained, student_id))
+                    else:
+                        # Insert new student
+                        insert_query = """
+                        INSERT INTO students (student_id, name, program, year, semester, detained)
                         VALUES (%s, %s, %s, %s, %s, %s)
                         """
-                        cursor.execute(query, (roll_number, name, branch, section, is_detained, email))
-                        students_imported += 1
-                        
-                    elif import_mode == 'update_or_insert':
-                        query = """
-                        INSERT INTO students (roll_number, name, branch, section, is_detained, email)
-                        VALUES (%s, %s, %s, %s, %s, %s)
-                        ON DUPLICATE KEY UPDATE
-                        name = VALUES(name),
-                        branch = VALUES(branch),
-                        section = VALUES(section),
-                        is_detained = VALUES(is_detained),
-                        email = VALUES(email)
-                        """
-                        cursor.execute(query, (roll_number, name, branch, section, is_detained, email))
-                        
-                        if cursor.lastrowid > 0:
-                            students_imported += 1
-                        else:
-                            students_updated += 1
-                            
-                    else:  # clear_all mode
-                        query = """
-                        INSERT INTO students (roll_number, name, branch, section, is_detained, email)
-                        VALUES (%s, %s, %s, %s, %s, %s)
-                        """
-                        cursor.execute(query, (roll_number, name, branch, section, is_detained, email))
-                        students_imported += 1
+                        cursor.execute(insert_query, (student_id, name, program, year, semester, detained))
                 
-                self.connection.commit()
+                    inserted_count += 1
                 
-                if import_mode == 'update_or_insert':
-                    message = f"Successfully processed students: {students_imported} new, {students_updated} updated"
-                elif import_mode == 'skip_duplicates':
-                    message = f"Successfully imported {students_imported} students, skipped {students_skipped} duplicates"
-                else:
-                    message = f"Successfully imported {students_imported} students"
-                
-                print(message)
-                return True, message
-                
-        except Error as e:
-            print(f"Error importing students: {e}")
-            self.connection.rollback()
-            return False, f"Database error: {str(e)}"
+                except Exception as row_error:
+                    print(f"Error processing row {inserted_count}: {row_error}")
+                    continue
+        
+            self.connection.commit()
+            cursor.close()
+        
+            print(f"Successfully processed {inserted_count} students from CSV")
+            return inserted_count
+        
         except Exception as e:
-            print(f"Error importing students: {e}")
-            return False, f"File error: {str(e)}"
-        finally:
-            if cursor:
-                cursor.close()
+            print(f"Error importing students from CSV: {e}")
+            if hasattr(self, 'connection') and self.connection:
+                self.connection.rollback()
+            return 0
 
     def get_duplicate_students(self, csv_file_path):
         """Check for duplicate roll numbers in CSV vs database"""
@@ -806,8 +917,6 @@ class Database:
     def get_emails_from_csv_data(self, csv_file_path):
         """Extract email addresses from uploaded CSV file"""
         try:
-            import pandas as pd
-            
             # Read CSV file
             df = pd.read_csv(csv_file_path)
             
