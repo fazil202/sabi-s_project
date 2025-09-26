@@ -4041,3 +4041,83 @@ jinja2.exceptions.TemplateNotFound: 500.html
 2025-09-26 07:53:27,937 - INFO - 127.0.0.1 - - [26/Sep/2025 07:53:27] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
 2025-09-26 07:53:28,245 - INFO - 127.0.0.1 - - [26/Sep/2025 07:53:28] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
 2025-09-26 07:53:45,201 - INFO - 127.0.0.1 - - [26/Sep/2025 07:53:45] "POST /pdf_history HTTP/1.1" 200 -
+2025-09-26 08:11:53,948 - INFO - Found 0 emails from session file: ../data/uploads\students_20250926_075327_sample_students.csv
+2025-09-26 08:11:53,981 - INFO - Found 3 emails from sample file: C:\CODE_BASE\Flutter Apps\learnings\sabi-s_project\data\samples\sample_students.csv
+2025-09-26 08:11:53,987 - INFO - Using 3 student + 0 faculty emails
+2025-09-26 08:11:53,988 - INFO - Recipient type: both
+2025-09-26 08:11:53,988 - INFO - Final recipients (3): ['mohamedfazil2584@gmail.com', 'mudinjakandupidi040101@gmail.com', 'mfazii4563@gmail.com']
+2025-09-26 08:12:03,791 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:03] "[32mPOST /send_email_notifications HTTP/1.1[0m" 302 -
+2025-09-26 08:12:03,809 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:03] "GET /pdf_history HTTP/1.1" 200 -
+2025-09-26 08:12:20,606 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:20] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:12:20,915 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:20] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:12:20,975 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:20] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:12:37,595 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:37] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:12:37,639 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:12:37,649 - INFO - 127.0.0.1 - - [26/Sep/2025 08:12:37] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:15:37,832 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\app.py', reloading
+2025-09-26 08:15:38,264 - INFO -  * Restarting with stat
+2025-09-26 08:15:40,311 - INFO - package: mysql.connector.plugins
+2025-09-26 08:15:40,311 - INFO - plugin_name: mysql_native_password
+2025-09-26 08:15:40,312 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 08:15:40,341 - WARNING -  * Debugger is active!
+2025-09-26 08:15:40,347 - INFO -  * Debugger PIN: 957-178-815
+2025-09-26 08:16:16,654 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\app.py', reloading
+2025-09-26 08:16:17,043 - INFO -  * Restarting with stat
+2025-09-26 08:16:18,915 - INFO - package: mysql.connector.plugins
+2025-09-26 08:16:18,915 - INFO - plugin_name: mysql_native_password
+2025-09-26 08:16:18,916 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 08:16:18,948 - WARNING -  * Debugger is active!
+2025-09-26 08:16:18,956 - INFO -  * Debugger PIN: 957-178-815
+2025-09-26 08:22:23,701 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:23] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:22:26,317 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:26] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:22:26,661 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:26] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:22:26,807 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:22:39,152 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:39] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:22:39,200 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:22:39,207 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:39] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:22:42,442 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:42] "[32mGET / HTTP/1.1[0m" 302 -
+2025-09-26 08:22:42,727 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:42] "GET /dashboard HTTP/1.1" 200 -
+2025-09-26 08:22:42,820 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:42] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-26 08:22:48,255 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:48] "GET /dashboard HTTP/1.1" 200 -
+2025-09-26 08:22:48,301 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:48] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-26 08:22:55,670 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:55] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2025-09-26 08:22:55,989 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:55] "GET /login HTTP/1.1" 200 -
+2025-09-26 08:22:56,326 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:22:56,333 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:56] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-26 08:22:58,170 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:58] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-26 08:22:58,177 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:58] "GET /dashboard HTTP/1.1" 200 -
+2025-09-26 08:22:58,527 - INFO - 127.0.0.1 - - [26/Sep/2025 08:22:58] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-26 08:23:02,645 - INFO - 127.0.0.1 - - [26/Sep/2025 08:23:02] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:23:02,952 - INFO - 127.0.0.1 - - [26/Sep/2025 08:23:02] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:23:03,014 - INFO - 127.0.0.1 - - [26/Sep/2025 08:23:03] "[33mGET /static/generate%20plan/generate_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:23:15,311 - INFO - 127.0.0.1 - - [26/Sep/2025 08:23:15] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:23:15,349 - INFO - 127.0.0.1 - - [26/Sep/2025 08:23:15] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:23:15,350 - INFO - 127.0.0.1 - - [26/Sep/2025 08:23:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:25:40,477 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\seating.py', reloading
+2025-09-26 08:25:40,666 - INFO -  * Restarting with stat
+2025-09-26 08:25:42,675 - INFO - package: mysql.connector.plugins
+2025-09-26 08:25:42,676 - INFO - plugin_name: mysql_native_password
+2025-09-26 08:25:42,678 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 08:25:42,719 - WARNING -  * Debugger is active!
+2025-09-26 08:25:42,731 - INFO -  * Debugger PIN: 957-178-815
+2025-09-26 08:25:44,754 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\seating.py', reloading
+2025-09-26 08:25:44,949 - INFO -  * Restarting with stat
+2025-09-26 08:25:46,771 - INFO - package: mysql.connector.plugins
+2025-09-26 08:25:46,771 - INFO - plugin_name: mysql_native_password
+2025-09-26 08:25:46,772 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 08:25:46,805 - WARNING -  * Debugger is active!
+2025-09-26 08:25:46,815 - INFO -  * Debugger PIN: 957-178-815
+2025-09-26 08:25:51,584 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\utils\\seating.py', reloading
+2025-09-26 08:25:51,881 - INFO -  * Restarting with stat
+2025-09-26 08:25:53,608 - INFO - package: mysql.connector.plugins
+2025-09-26 08:25:53,609 - INFO - plugin_name: mysql_native_password
+2025-09-26 08:25:53,610 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 08:25:53,647 - WARNING -  * Debugger is active!
+2025-09-26 08:25:53,653 - INFO -  * Debugger PIN: 957-178-815
+2025-09-26 08:25:55,672 - INFO - 127.0.0.1 - - [26/Sep/2025 08:25:55] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:25:55,786 - INFO - 127.0.0.1 - - [26/Sep/2025 08:25:55] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -
+2025-09-26 08:25:55,828 - INFO - 127.0.0.1 - - [26/Sep/2025 08:25:55] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:25:58,302 - INFO - 127.0.0.1 - - [26/Sep/2025 08:25:58] "GET /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:26:02,037 - INFO - 127.0.0.1 - - [26/Sep/2025 08:26:02] "POST /generate_plan HTTP/1.1" 200 -
+2025-09-26 08:26:02,103 - INFO - 127.0.0.1 - - [26/Sep/2025 08:26:02] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-26 08:26:02,423 - INFO - 127.0.0.1 - - [26/Sep/2025 08:26:02] "[33mGET /static/seating%20plan/seating_plan.css HTTP/1.1[0m" 404 -

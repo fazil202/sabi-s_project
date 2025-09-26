@@ -508,11 +508,26 @@ def download_pdf():
         return redirect(url_for('generate_plan'))
     
     from backend.utils.seating import generate_seating_plan
-    seating_plan, unseated_students, error = generate_seating_plan(student_csv, room_csv, students_per_desk, include_detained)
+    
+    # Debug: Print parameters being passed
+    print(f"Generating seating plan with:")
+    print(f"  Student CSV: {student_csv}")
+    print(f"  Room CSV: {room_csv}")
+    print(f"  Students per desk: {students_per_desk}")
+    print(f"  Include detained: {include_detained}")
+    
+    seating_plan, unseated_students, error = generate_seating_plan(
+        student_csv, room_csv, students_per_desk, include_detained
+    )
     
     if error:
         flash(f'Error generating seating plan: {error}')
         return redirect(url_for('generate_plan'))
+    
+    # Debug: Print seating plan structure
+    print(f"Generated seating plan with {len(seating_plan)} rooms:")
+    for i, room in enumerate(seating_plan):
+        print(f"  Room {i+1}: {room.get('room_number')} / {room.get('room_name')} - {room.get('students_count', 0)} students")
     
     try:
         # Use absolute path for pdf_folder
@@ -532,11 +547,7 @@ def download_pdf():
             user_id = session.get('user_id')
 
             # Count students and rooms
-            student_count = sum(
-                sum(1 for seat in row if seat is not None)
-                for room in seating_plan
-                for row in room.get('seats', [])
-            )
+            student_count = sum(room.get('students_count', 0) for room in seating_plan)
             room_count = len(seating_plan)
 
             db.save_pdf_history(
@@ -544,35 +555,11 @@ def download_pdf():
                 student_count, room_count, 
                 students_per_desk, include_detained, building
             )
+            
+            # Log PDF generation
+            db.log_activity(user_id, 'PDF_GENERATED', f"Generated seating plan PDF: {pdf_filename}")
 
-        # Send email notification after PDF generation
-        email_results = []
-        # Get faculty users - fixed method call
-        if db and db.connection and db.connection.is_connected():
-            all_users = db.get_users_by_role()
-            faculty_users = [user for user in all_users if user.get('role') == 'faculty']
-            recipients = [user['email'] for user in faculty_users]
-            
-            for email in recipients:
-                subject = "Exam Seating Plan"
-                body = f"""
-                <h2>Exam Seating Plan</h2>
-                <p>Please find attached the exam seating plan generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.</p>
-                <p>Best regards,<br>Exam Management System</p>
-                """
-                success, error_msg = db.send_email(email, subject, body)
-                if success:
-                    db.log_activity(user_id, 'EMAIL_SENT', f"Seating plan sent to {email}")
-                    email_results.append(f"Email sent to {email}")
-                else:
-                    email_results.append(f"Failed to send email to {email}: {error_msg}")
-        
-        if email_results:
-            for msg in email_results:
-                flash(msg)
-        else:
-            flash('No recipients found for email notifications.')
-            
+        flash(f'PDF generated successfully with {len(seating_plan)} rooms!')
         return send_file(pdf_path, as_attachment=True, download_name=pdf_filename)
         
     except Exception as e:

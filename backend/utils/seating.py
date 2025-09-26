@@ -22,6 +22,7 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
         rooms_df.columns = rooms_df.columns.str.lower().str.strip()
         
         print(f"Normalized room columns: {list(rooms_df.columns)}")
+        print(f"Room DataFrame after normalization:\n{rooms_df}")
         
         # Handle different column name variations for detained status
         detained_column = None
@@ -36,22 +37,17 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
         
         # Filter students based on include_detained setting
         if include_detained:
-            # Include ALL students (both detained and non-detained)
             filtered_students = students_df.copy()
             print(f"Including ALL students: {len(filtered_students)} total")
         else:
-            # Only include non-detained students
             if detained_column:
-                # Handle various formats of detained status (TRUE/FALSE, True/False, 1/0, Yes/No)
                 detained_mask = students_df[detained_column].astype(str).str.upper().isin(['TRUE', '1', 'YES', 'Y'])
-                filtered_students = students_df[~detained_mask]  # NOT detained
+                filtered_students = students_df[~detained_mask]
                 print(f"Excluding detained students: {len(filtered_students)} non-detained out of {len(students_df)} total")
             else:
-                # If no detained column found, include all students
                 filtered_students = students_df.copy()
                 print(f"No detained column found, including all {len(filtered_students)} students")
         
-        # Debug: Show filtered student count
         print(f"Final student count for seating: {len(filtered_students)}")
         
         if len(filtered_students) == 0:
@@ -73,24 +69,40 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
         # Debug: Show sample students
         print(f"Sample students (first 3): {students[:3]}")
         
-        # Prepare room list with better column handling
+        # Prepare room list with enhanced debugging
         rooms = []
+        print("\n=== ROOM PROCESSING DEBUG ===")
+        
         for idx, room in rooms_df.iterrows():
+            print(f"\nProcessing room index {idx}:")
+            print(f"Raw room data: {dict(room)}")
+            
             # Handle multiple possible column names for room identification
             room_number = None
+            room_name = None
             capacity = None
             
             # Try different column names for room number/name
-            for col in ['room_number', 'room_name', 'room', 'name', 'room_id']:
+            room_columns = ['room_number', 'room_name', 'room', 'name', 'room_id', 'room_no']
+            for col in room_columns:
                 if col in rooms_df.columns and pd.notna(room.get(col)):
-                    room_number = str(room.get(col))
-                    break
+                    if room_number is None:
+                        room_number = str(room.get(col)).strip()
+                    if 'name' in col.lower() and room_name is None:
+                        room_name = str(room.get(col)).strip()
+                    print(f"Found {col}: '{room.get(col)}'")
+            
+            # If no specific room_name found, use room_number
+            if room_name is None:
+                room_name = room_number
             
             # Try different column names for capacity
-            for col in ['capacity', 'seats', 'max_seats', 'total_seats']:
+            capacity_columns = ['capacity', 'seats', 'max_seats', 'total_seats']
+            for col in capacity_columns:
                 if col in rooms_df.columns and pd.notna(room.get(col)):
                     try:
                         capacity = int(float(room.get(col)))
+                        print(f"Found capacity in {col}: {capacity}")
                         break
                     except (ValueError, TypeError):
                         continue
@@ -98,19 +110,30 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
             # Default values if not found
             if room_number is None:
                 room_number = f'Room_{idx + 1}'
+                print(f"Using default room_number: {room_number}")
+            
+            if room_name is None:
+                room_name = room_number
+                print(f"Using room_number as room_name: {room_name}")
+                
             if capacity is None:
                 capacity = 30
+                print(f"Using default capacity: {capacity}")
             
             room_info = {
                 'room_number': room_number,
-                'room_name': room_number,  # Add room_name field explicitly
+                'room_name': room_name,
                 'capacity': capacity,
                 'building': str(room.get('building', 'Main Building')),
                 'floor': str(room.get('floor', '1'))
             }
-            rooms.append(room_info)
             
-        print(f"Processed rooms: {[(r['room_number'], r['capacity']) for r in rooms]}")
+            print(f"Final room_info: {room_info}")
+            rooms.append(room_info)
+        
+        print(f"\n=== FINAL ROOMS LIST ===")
+        for i, r in enumerate(rooms):
+            print(f"Room {i+1}: number='{r['room_number']}', name='{r['room_name']}', capacity={r['capacity']}")
         
         # Sort rooms by room number for consistent allocation
         rooms.sort(key=lambda x: str(x['room_number']))
@@ -126,17 +149,17 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
                 break
                 
             room_capacity = room['capacity']
-            seats_per_row = 6  # Default seats per row
+            seats_per_row = 6
             rows = math.ceil(room_capacity / seats_per_row)
             
             room_seating = {
                 'room_number': room['room_number'],
-                'room_name': room['room_name'],  # Include room_name explicitly
+                'room_name': room['room_name'],
                 'building': room['building'],
                 'floor': room['floor'],
                 'capacity': room_capacity,
                 'seats': [],
-                'students_count': 0  # Track students in this room
+                'students_count': 0
             }
             
             # Create seating arrangement for this room
@@ -149,7 +172,6 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
                     if seats_filled >= room_capacity or not student_queue:
                         row.append(None)
                     else:
-                        # Assign students to seats based on students_per_desk
                         seat_students = []
                         for _ in range(students_per_desk):
                             if student_queue and seats_filled < room_capacity:
@@ -169,13 +191,17 @@ def generate_seating_plan(student_csv_path, room_csv_path, students_per_desk=1, 
             room_seating['students_count'] = room_student_count
             seating_plan.append(room_seating)
             
-            print(f"Room {room['room_number']}: {room_student_count} students seated")
+            print(f"Added to seating plan - Room '{room['room_name']}' ({room['room_number']}): {room_student_count} students")
         
-        # Any remaining students are unseated
         unseated_students = list(student_queue)
         
-        print(f"Seating completed: {total_seated} students seated, {len(unseated_students)} unseated")
-        print(f"Generated plan for {len(seating_plan)} rooms")
+        print(f"\n=== SEATING PLAN SUMMARY ===")
+        print(f"Total students seated: {total_seated}")
+        print(f"Total unseated students: {len(unseated_students)}")
+        print(f"Total rooms used: {len(seating_plan)}")
+        
+        for i, room in enumerate(seating_plan):
+            print(f"Plan Room {i+1}: '{room['room_name']}' - {room['students_count']} students")
         
         return seating_plan, unseated_students, None
         
@@ -194,19 +220,17 @@ def validate_csv_format(csv_path, expected_type):
         df = pd.read_csv(csv_path)
         
         if expected_type == 'students':
-            required_columns = ['name']  # Minimum required
+            required_columns = ['name']
             optional_columns = ['roll_number', 'id', 'branch', 'department', 'section', 'detained_status', 'detained']
         elif expected_type == 'rooms':
-            required_columns = ['room_number', 'room_name', 'room', 'capacity', 'seats']  # Any of these
+            required_columns = ['room_number', 'room_name', 'room', 'capacity', 'seats']
             optional_columns = ['building', 'floor']
         else:
             return False, "Unknown CSV type"
         
-        # Normalize column names for comparison
         df_columns_normalized = [col.lower().strip() for col in df.columns]
         required_normalized = [col.lower() for col in required_columns]
         
-        # Check if at least one required column exists
         found_required = any(req in df_columns_normalized for req in required_normalized)
         
         if not found_required:

@@ -370,7 +370,7 @@
       <div class="seating-section">
         {% if seating_plan %} {% for room in seating_plan %}
         <div class="room-card">
-          <div class="room-title">Room {{ room.room }}</div>
+          <div class="room-title">Room {{ room.room_name }}</div>
           <table class="seating-table">
             {% for row in room.seats %}
             <tr>
