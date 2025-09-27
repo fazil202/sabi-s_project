@@ -9,6 +9,11 @@ from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import pandas as pd
+import sqlite3
+import bcrypt
+from datetime import datetime
+import os
+
 from email.mime.base import MIMEBase
 from email import encoders
 import time
@@ -636,6 +641,69 @@ class Database:
         finally:
             if cursor:
                 cursor.close()
+
+    
+    def change_password(self, user_id, old_password, new_password):
+        """Change user password after verifying old password"""
+        try:
+            # Get current password hash
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
+            result = cursor.fetchone()
+            
+            if not result:
+                return False, "User not found"
+            
+            current_password_hash = result[0]
+            
+            # Ensure we have a valid hash
+            if not current_password_hash:
+                return False, "Invalid password hash in database"
+            
+            # Validate bcrypt hash format
+            if not isinstance(current_password_hash, str) or len(current_password_hash) < 60:
+                return False, "Invalid password hash format in database"
+            
+            # Check if hash starts with bcrypt identifier
+            if not current_password_hash.startswith('$2'):
+                return False, "Password hash is not in bcrypt format"
+            
+            # Convert hash to bytes if it's a string
+            if isinstance(current_password_hash, str):
+                hash_bytes = current_password_hash.encode('utf-8')
+            else:
+                hash_bytes = current_password_hash
+            
+            # Verify old password with proper error handling
+            try:
+                if not bcrypt.checkpw(old_password.encode('utf-8'), hash_bytes):
+                    return False, "Current password is incorrect"
+            except ValueError as ve:
+                print(f"Password verification error: {ve}")
+                return False, "Password hash is corrupted or invalid format"
+            except Exception as e:
+                print(f"Unexpected bcrypt error: {e}")
+                return False, "Password verification failed"
+            
+            # Hash new password
+            new_password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            
+            # Update password
+            cursor.execute(
+                "UPDATE users SET password_hash = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+                (new_password_hash, user_id)
+            )
+            self.connection.commit()
+            
+            return True, "Password changed successfully"
+            
+        except Exception as e:
+            print(f"Error changing password: {e}")
+            return False, "Failed to change password"
+        finally:
+            if cursor:
+                cursor.close()
+
 
     def get_system_stats(self):
         """Get comprehensive system statistics for admin dashboard"""
