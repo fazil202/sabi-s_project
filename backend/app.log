@@ -4212,3 +4212,34 @@ jinja2.exceptions.TemplateNotFound: 500.html
 2025-09-27 10:17:15,508 - INFO - 127.0.0.1 - - [27/Sep/2025 10:17:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
 2025-09-27 10:17:15,743 - INFO - 127.0.0.1 - - [27/Sep/2025 10:17:15] "[33mGET /static/settings/settings.css HTTP/1.1[0m" 404 -
 2025-09-27 10:18:12,868 - INFO -  * Detected change in 'C:\\CODE_BASE\\Flutter Apps\\learnings\\sabi-s_project\\backend\\models\\database.py', reloading
+2025-09-27 10:18:13,291 - INFO -  * Restarting with stat
+2025-09-27 10:18:16,471 - INFO - package: mysql.connector.plugins
+2025-09-27 10:18:16,471 - INFO - plugin_name: mysql_native_password
+2025-09-27 10:18:16,472 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-27 10:18:16,508 - WARNING -  * Debugger is active!
+2025-09-27 10:18:16,516 - INFO -  * Debugger PIN: 533-445-843
+2025-09-27 10:18:36,767 - INFO - 127.0.0.1 - - [27/Sep/2025 10:18:36] "[32mPOST /settings HTTP/1.1[0m" 302 -
+2025-09-27 10:18:36,807 - INFO - 127.0.0.1 - - [27/Sep/2025 10:18:36] "GET /settings HTTP/1.1" 200 -
+2025-09-27 10:18:37,201 - INFO - 127.0.0.1 - - [27/Sep/2025 10:18:37] "[33mGET /static/settings/settings.css HTTP/1.1[0m" 404 -
+2025-09-27 10:18:37,570 - INFO - 127.0.0.1 - - [27/Sep/2025 10:18:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-27 10:19:22,533 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:22] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-27 10:19:22,858 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:22] "GET /login HTTP/1.1" 200 -
+2025-09-27 10:19:23,186 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:23] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-27 10:19:23,188 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:23] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-27 10:19:25,651 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:25] "GET /signup HTTP/1.1" 200 -
+2025-09-27 10:19:25,954 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-27 10:19:26,050 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:26] "[33mGET /static/signup/signup.css HTTP/1.1[0m" 404 -
+2025-09-27 10:19:55,112 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:55] "[32mPOST /signup HTTP/1.1[0m" 302 -
+2025-09-27 10:19:55,117 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:55] "GET /login HTTP/1.1" 200 -
+2025-09-27 10:19:55,156 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:55] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-27 10:19:55,465 - INFO - 127.0.0.1 - - [27/Sep/2025 10:19:55] "[33mGET /static/login/login.css HTTP/1.1[0m" 404 -
+2025-09-27 10:20:01,107 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:01] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-27 10:20:01,126 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:01] "GET /dashboard HTTP/1.1" 200 -
+2025-09-27 10:20:01,243 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:01] "[33mGET /frontend/templates/dashboard/dashboard.css HTTP/1.1[0m" 404 -
+2025-09-27 10:20:03,622 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:03] "GET /settings HTTP/1.1" 200 -
+2025-09-27 10:20:03,795 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:03] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-27 10:20:03,886 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:03] "[33mGET /static/settings/settings.css HTTP/1.1[0m" 404 -
+2025-09-27 10:20:18,972 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:18] "[32mPOST /settings HTTP/1.1[0m" 302 -
+2025-09-27 10:20:18,986 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:18] "GET /settings HTTP/1.1" 200 -
+2025-09-27 10:20:19,316 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:19] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-09-27 10:20:19,318 - INFO - 127.0.0.1 - - [27/Sep/2025 10:20:19] "[33mGET /static/settings/settings.css HTTP/1.1[0m" 404 -
