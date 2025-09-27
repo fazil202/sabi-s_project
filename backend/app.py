@@ -206,61 +206,99 @@ def dashboard():
 @app.route('/settings', methods=['GET', 'POST'])
 @require_login
 def settings():
+    """User settings page with enhanced functionality"""
+    user_id = session.get('user_id')
+    
+    if not db or not db.connection or not db.connection.is_connected():
+        flash('Database not available.', 'error')
+        return redirect(url_for('dashboard'))
+    
     if request.method == 'POST':
         action = request.form.get('action')
         
-        if action == 'change_password':
-            old_password = request.form.get('old_password')
-            new_password = request.form.get('new_password')
-            confirm_password = request.form.get('confirm_password')
-            
-            if new_password != confirm_password:
-                flash('New passwords do not match.')
-                return redirect(url_for('settings'))
-            
-            if db and db.connection and db.connection.is_connected():
-                user_id = session.get('user_id')
-                success, message = db.change_password(user_id, old_password, new_password)
-                flash(message)
-            else:
-                flash('Database not available.')
-            
-            return redirect(url_for('settings'))
-        
-        elif action == 'update_system_settings' and get_user_role() == 'admin':
-            # Update system settings
-            settings_to_update = [
-                'students_per_desk', 'include_detained', 'default_building',
-                'session_timeout', 'max_login_attempts', 'email_notifications',
-                'password_min_length', 'pdf_retention_days'
-            ]
-            
-            if db and db.connection and db.connection.is_connected():
-                user_id = session.get('user_id')
-                for setting in settings_to_update:
-                    value = request.form.get(setting)
-                    if value is not None:
-                        db.update_setting(setting, value, user_id)
+        try:
+            if action == 'change_password':
+                old_password = request.form.get('old_password')
+                new_password = request.form.get('new_password')
+                confirm_password = request.form.get('confirm_password')
                 
-                flash('System settings updated successfully.')
-            else:
-                flash('Database not available.')
+                if not old_password or not new_password:
+                    flash('Please fill in all password fields.', 'error')
+                elif new_password != confirm_password:
+                    flash('New passwords do not match.', 'error')
+                elif len(new_password) < 6:
+                    flash('Password must be at least 6 characters long.', 'error')
+                else:
+                    success, message = db.change_password(user_id, old_password, new_password)
+                    if success:
+                        flash('Password changed successfully!', 'success')
+                    else:
+                        flash(message, 'error')
             
-            return redirect(url_for('settings'))
+            elif action == 'update_profile':
+                full_name = request.form.get('full_name', '').strip()
+                email = request.form.get('email', '').strip()
+                
+                if not full_name or not email:
+                    flash('Please fill in all profile fields.', 'error')
+                elif '@' not in email:
+                    flash('Please enter a valid email address.', 'error')
+                else:
+                    success, message = db.update_user_profile(user_id, full_name, email)
+                    if success:
+                        flash('Profile updated successfully!', 'success')
+                        # Update session data
+                        session['full_name'] = full_name
+                        session['email'] = email
+                    else:
+                        flash(message, 'error')
+            
+            elif action == 'update_preferences':
+                # Handle user preferences
+                email_notifications = request.form.get('email_notifications') == 'on'
+                auto_save = request.form.get('auto_save') == 'on'
+                theme = request.form.get('theme', 'light')
+                
+                # Save preferences
+                db.update_user_setting(user_id, 'email_notifications', str(email_notifications))
+                db.update_user_setting(user_id, 'auto_save', str(auto_save))
+                db.update_user_setting(user_id, 'theme', theme)
+                
+                flash('Preferences updated successfully!', 'success')
+            
+            else:
+                flash('Invalid action specified.', 'error')
+                
+        except Exception as e:
+            app.logger.error(f"Error in settings: {e}")
+            flash(f'Error updating settings: {str(e)}', 'error')
     
-    # Get current settings
-    current_settings = {}
-    if db and db.connection and db.connection.is_connected():
-        settings_keys = [
-            'students_per_desk', 'include_detained', 'default_building',
-            'session_timeout', 'max_login_attempts', 'email_notifications',
-            'password_min_length', 'pdf_retention_days'
-        ]
+    # Get current user data and settings
+    try:
+        user_data = db.get_user_by_id(user_id)
         
-        for key in settings_keys:
-            current_settings[key] = db.get_setting(key, '')
-    
-    return render_template('settings/settings.html', current_settings=current_settings, user_role=get_user_role())
+        # Check if database methods exist, if not use defaults
+        if hasattr(db, 'get_user_settings'):
+            user_settings = db.get_user_settings(user_id)
+        else:
+            # Default user settings if method doesn't exist
+            user_settings = {
+                'email_notifications': 'true',
+                'auto_save': 'false',
+                'theme': 'light'
+            }
+        
+        # Create user_settings table if method exists
+        if hasattr(db, 'create_user_settings_table'):
+            db.create_user_settings_table()
+        
+        return render_template('settings/settings.html', 
+                             user=user_data, 
+                             settings=user_settings)
+    except Exception as e:
+        app.logger.error(f"Error loading settings page: {e}")
+        flash(f'Error loading settings: {str(e)}', 'error')
+        return redirect(url_for('dashboard'))
 
 @app.route('/admin')
 @require_role('admin')

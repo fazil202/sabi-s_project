@@ -13,8 +13,9 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
     Returns:
         str: Path to the generated PDF file
     """
-    # Create better formatted HTML
+    # Create better formatted HTML with larger fonts
     html = '''
+    
     <html>
     <head>
         <meta charset="UTF-8">
@@ -31,21 +32,42 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
                 min-width: 130px;
                 min-height: 70px;
             }
-            .student { background-color: #f8f9fa; font-size: 9px; line-height: 1.1; }
-            .empty { background-color: #e9ecef; color: #6c757d; font-size: 10px; }
-            .roll { font-weight: bold; color: #2d3a4b; font-size: 10px; }
-            .name { color: #495057; font-size: 9px; }
-            .branch { color: #6c757d; font-size: 8px; }
+            .student { background-color: #f8f9fa; font-size: 12px; line-height: 1.1; }
+            .empty { background-color: #e9ecef; color: #6c757d; font-size: 12px; }
+            .roll { font-weight: bold; color: #2d3a4b; font-size: 14px; }
+            .name { color: #495057; font-size: 12px; }
+            .branch { color: #6c757d; font-size: 12px; }
         </style>
     </head>
     <body>
         <h1>Exam Seating Plan</h1>
+    
     '''
     
-    for room in seating_plan:
-        html += f"<h2>Room: {room.get('name', room.get('room', 'Unknown Room'))}</h2>"
-        html += "<table>"
+    for room_index, room in enumerate(seating_plan):
+        # Fix room name retrieval - check multiple possible keys
+        room_name = (room.get('room_name') or 
+                    room.get('room_number') or 
+                    room.get('name') or 
+                    room.get('room') or 
+                    f'Room {room_index + 1}')
         
+        # Add room info
+        capacity = room.get('capacity', 'N/A')
+        students_count = room.get('students_count', 0)
+        building = room.get('building', 'Main Building')
+        
+        html += f'''
+        <div class="room-card">
+            <h2>Room: {room_name}</h2>
+            <div class="room-info">
+                Building: {building} | Capacity: {capacity} | Students: {students_count} | 
+                Utilization: {(students_count/capacity*100):.1f}% if capacity != 'N/A' else 'N/A'
+            </div>
+            <table>
+        '''
+        
+        # Process seats
         for row in room['seats']:
             html += '<tr>'
             for desk in row:
@@ -56,14 +78,33 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
                         html += '<td class="student">'
                         for i, student in enumerate(desk):
                             if i > 0:
-                                html += '<hr style="margin: 2px 0; border: 0.5px solid #ccc;">'
+                                html += '<hr class="student-separator">'
                             
                             roll_number = student.get('roll_number', 'N/A')
-                            name = student.get('name', 'Unknown')
-                            branch = student.get('branch', 'N/A')
+                            name = student.get('name', student.get('Name', 'Unknown'))
+                            branch = student.get('branch', student.get('Branch', 'N/A'))
                             
                             html += f'''
-                            <div style="margin-bottom: 2px;">
+                            <div style="margin-bottom: 3px;">
+                                <div class="roll">{roll_number}</div>
+                                <div class="name">{name}</div>
+                                <div class="branch">{branch}</div>
+                            </div>
+                            '''
+                        html += '</td>'
+                    elif isinstance(desk, dict) and 'students' in desk:
+                        # Desk with students array
+                        html += '<td class="student">'
+                        for i, student in enumerate(desk['students']):
+                            if i > 0:
+                                html += '<hr class="student-separator">'
+                            
+                            roll_number = student.get('roll_number', 'N/A')
+                            name = student.get('name', student.get('Name', 'Unknown'))
+                            branch = student.get('branch', student.get('Branch', 'N/A'))
+                            
+                            html += f'''
+                            <div style="margin-bottom: 3px;">
                                 <div class="roll">{roll_number}</div>
                                 <div class="name">{name}</div>
                                 <div class="branch">{branch}</div>
@@ -73,8 +114,8 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
                     else:
                         # Single student per desk
                         roll_number = desk.get('roll_number', 'N/A')
-                        name = desk.get('name', 'Unknown')
-                        branch = desk.get('branch', 'N/A')
+                        name = desk.get('name', desk.get('Name', 'Unknown'))
+                        branch = desk.get('branch', desk.get('Branch', 'N/A'))
                         
                         html += f'''
                         <td class="student">
@@ -86,7 +127,11 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
                 else:
                     html += '<td class="empty">Empty</td>'
             html += '</tr>'
-        html += '</table>'
+        
+        html += '''
+            </table>
+        </div>
+        '''
     
     html += '</body></html>'
     
@@ -97,10 +142,16 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
     pdf_path = os.path.join(output_folder, filename)
     
     # Generate PDF
-    with open(pdf_path, 'wb') as f:
-        pisa_status = pisa.CreatePDF(html, dest=f)
-    
-    if pisa_status.err:
-        raise Exception(f"Error generating PDF: {pisa_status.err}")
-    
-    return pdf_path
+    try:
+        with open(pdf_path, 'wb') as f:
+            pisa_status = pisa.CreatePDF(html, dest=f)
+        
+        if pisa_status.err:
+            raise Exception(f"Error generating PDF: {pisa_status.err}")
+        
+        print(f"PDF successfully generated: {pdf_path}")
+        return pdf_path
+        
+    except Exception as e:
+        print(f"Error creating PDF: {str(e)}")
+        raise Exception(f"Failed to generate PDF: {str(e)}")
