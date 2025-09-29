@@ -45,24 +45,48 @@ def export_to_pdf(seating_plan, filename='seating_plan.pdf', output_folder='.'):
     '''
     
     for room_index, room in enumerate(seating_plan):
-        # Fix room name retrieval - check multiple possible keys
-        room_name = (room.get('room_name') or 
-                    room.get('room_number') or 
-                    room.get('name') or 
-                    room.get('room') or 
-                    f'Room {room_index + 1}')
-        
-        # Add room info
-        capacity = room.get('capacity', 'N/A')
-        students_count = room.get('students_count', 0)
+        room_name = (
+            room.get('room_name')
+            or room.get('room_number')
+            or room.get('name')
+            or room.get('room')
+            or f'Room {room_index + 1}'
+        )
+
+        capacity_raw = room.get('capacity', 'N/A')
+        try:
+            capacity_value = float(capacity_raw)
+            capacity_display = int(capacity_value) if capacity_value.is_integer() else capacity_value
+        except (TypeError, ValueError):
+            capacity_value = None
+            capacity_display = 'N/A'
+
+        students_count = room.get('students_count')
+        if students_count is None:
+            students_count = 0
+            for row in room.get('seats', []):
+                for desk in row:
+                    if not desk:
+                        continue
+                    if isinstance(desk, list):
+                        students_count += len(desk)
+                    elif isinstance(desk, dict) and 'students' in desk:
+                        students_count += len(desk.get('students', []))
+                    else:
+                        students_count += 1
+
+        if capacity_value and capacity_value > 0:
+            utilization = f"{(students_count / capacity_value) * 100:.1f}%"
+        else:
+            utilization = 'N/A'
+
         building = room.get('building', 'Main Building')
-        
+
         html += f'''
         <div class="room-card">
             <h2>Room: {room_name}</h2>
             <div class="room-info">
-                Building: {building} | Capacity: {capacity} | Students: {students_count} | 
-                Utilization: {(students_count/capacity*100):.1f}% if capacity != 'N/A' else 'N/A'
+                Building: {building} | Capacity: {capacity_display} | Students: {students_count} | Utilization: {utilization}
             </div>
             <table>
         '''

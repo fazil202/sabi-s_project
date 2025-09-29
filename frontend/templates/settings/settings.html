@@ -1,166 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Settings - Exam Management System</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="/static/settings/settings.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/settings/settings.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
-                <i class="fas fa-chair"></i> Exam Seating System
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('generate_plan') }}">
-                            <i class="fas fa-plus"></i> Generate Plan
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('pdf_history') }}">
-                            <i class="fas fa-history"></i> History
-                        </a>
-                    </li>
-                     
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> {{ session.full_name }}
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item active" href="{{ url_for('settings') }}">
-                                <i class="fas fa-cog"></i> Settings
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+          <i class="fas fa-chair"></i> Exam Seating System
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('generate_plan') }}">
+                <i class="fas fa-plus"></i> Generate Plan
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('pdf_history') }}">
+                <i class="fas fa-history"></i> History
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle active"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user"></i> {{ session.full_name }}
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item active"
+                    href="{{ url_for('settings') }}"
+                  >
+                    <i class="fas fa-cog"></i> Settings
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <div class="container mt-4">
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for
+      message in messages %}
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
 
-        <div class="row">
-            <div class="col-lg-10 mx-auto">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0" style="color: white;">
-                            <i class="fas fa-cog"></i> Profile & Security
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <!-- Settings Navigation -->
-                        <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
-                            <!-- <li class="nav-item" role="presentation">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              <h3 class="mb-0" style="color: white">
+                <i class="fas fa-cog"></i> Profile & Security
+              </h3>
+            </div>
+            <div class="card-body">
+              <!-- Settings Navigation -->
+              <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <!-- <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
                                     <i class="fas fa-user"></i> Profile & Security
                                 </button>
                             </li> -->
-                            <!-- {% if user_role == 'admin' %}
+                <!-- {% if user_role == 'admin' %}
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab">
                                     <i class="fas fa-server"></i> System Settings
                                 </button>
                             </li>
                             {% endif %} -->
-                            <!-- <li class="nav-item" role="presentation">
+                <!-- <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences" type="button" role="tab">
                                     <i class="fas fa-sliders-h"></i> Preferences
                                 </button>
                             </li> -->
-                        </ul>
+              </ul>
 
-                        <div class="tab-content mt-4" id="settingsTabContent">
-                            <!-- Profile & Security Tab -->
-                            <div class="tab-pane fade show active" id="profile" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="card mb-3">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-user-circle"></i> Profile Information
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Username</label>
-                                                    <input type="text" class="form-control" value="{{ session.username }}" readonly>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Full Name</label>
-                                                    <input type="text" class="form-control" value="{{ session.full_name }}" readonly>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Role</label>
-                                                    <input type="text" class="form-control" value="{{ session.role.title() }}" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">
-                                                    <i class="fas fa-lock"></i> Change Password
-                                                </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <form method="POST">
-                                                    <input type="hidden" name="action" value="change_password">
-                                                    <div class="mb-3">
-                                                        <label for="old_password" class="form-label">Current Password</label>
-                                                        <input type="password" class="form-control" id="old_password" name="old_password" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="new_password" class="form-label">New Password</label>
-                                                        <input type="password" class="form-control" id="new_password" name="new_password" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="confirm_password" class="form-label">Confirm New Password</label>
-                                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-warning">
-                                                        <i class="fas fa-key"></i> Change Password
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+              <div class="tab-content mt-4" id="settingsTabContent">
+                <!-- Profile & Security Tab -->
+                <div
+                  class="tab-pane fade show active"
+                  id="profile"
+                  role="tabpanel"
+                >
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="card mb-3">
+                        <div class="card-header">
+                          <h5 class="mb-0">
+                            <i class="fas fa-user-circle"></i> Profile
+                            Information
+                          </h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              value="{{ session.username }}"
+                              readonly
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              value="{{ session.full_name }}"
+                              readonly
+                            />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              value="{{ session.role.title() }}"
+                              readonly
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0">
+                            <i class="fas fa-lock"></i> Change Password
+                          </h5>
+                        </div>
+                        <div class="card-body">
+                          <form method="POST">
+                            <input
+                              type="hidden"
+                              name="action"
+                              value="change_password"
+                            />
+                            <div class="mb-3">
+                              <label for="old_password" class="form-label"
+                                >Current Password</label
+                              >
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="old_password"
+                                name="old_password"
+                                required
+                              />
                             </div>
+                            <div class="mb-3">
+                              <label for="new_password" class="form-label"
+                                >New Password</label
+                              >
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="new_password"
+                                name="new_password"
+                                required
+                              />
+                            </div>
+                            <div class="mb-3">
+                              <label for="confirm_password" class="form-label"
+                                >Confirm New Password</label
+                              >
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="confirm_password"
+                                name="confirm_password"
+                                required
+                              />
+                            </div>
+                            <button type="submit" class="btn btn-warning">
+                              <i class="fas fa-key"></i> Change Password
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                            <!-- System Settings Tab (Admin Only) -->
-                            <!-- {% if user_role == 'admin' %}
+                <!-- System Settings Tab (Admin Only) -->
+                <!-- {% if user_role == 'admin' %}
                             <div class="tab-pane fade" id="system" role="tabpanel">
                                 <div class="card">
                                     <div class="card-header">
@@ -235,8 +307,8 @@
                             </div>
                             {% endif %} -->
 
-                            <!-- Preferences Tab -->
-                            <!-- <div class="tab-pane fade" id="preferences" role="tabpanel">
+                <!-- Preferences Tab -->
+                <!-- <div class="tab-pane fade" id="preferences" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card">
@@ -296,12 +368,12 @@
                                     </div>
                                 </div>
                             </div> -->
-                        </div>
-                    </div>
-                </div>
+              </div>
+            </div>
+          </div>
 
-                <!-- Account Security Information -->
-                <!-- <div class="card mt-4">
+          <!-- Account Security Information -->
+          <!-- <div class="card mt-4">
                     <div class="card-header">
                         <h5 class="mb-0">
                             <i class="fas fa-shield-alt"></i> Security Information
@@ -339,23 +411,25 @@
                         </div>
                     </div>
                 </div> -->
-            </div>
         </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Password confirmation validation
-        document.getElementById('confirm_password').addEventListener('input', function() {
-            const newPassword = document.getElementById('new_password').value;
-            const confirmPassword = this.value;
-            
-            if (newPassword !== confirmPassword) {
-                this.setCustomValidity('Passwords do not match');
-            } else {
-                this.setCustomValidity('');
-            }
+      // Password confirmation validation
+      document
+        .getElementById("confirm_password")
+        .addEventListener("input", function () {
+          const newPassword = document.getElementById("new_password").value;
+          const confirmPassword = this.value;
+
+          if (newPassword !== confirmPassword) {
+            this.setCustomValidity("Passwords do not match");
+          } else {
+            this.setCustomValidity("");
+          }
         });
     </script>
-</body>
+  </body>
 </html>

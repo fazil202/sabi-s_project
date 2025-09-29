@@ -126,22 +126,25 @@ def login():
         if db and db.connection and db.connection.is_connected():
             user = db.authenticate_user(username, password)
             if user:
-                # Handle both tuple and dictionary formats
                 if isinstance(user, tuple):
-                    # Assuming tuple format: (id, username, email, full_name, role, ...)
-                    user_id, user_name, email, full_name, role = user[:5]
+                    user_id = user[0]
+                    user_name = user[1] if len(user) > 1 else username
+                    email = user[2] if len(user) > 2 else ''
+                    full_name = user[4] if len(user) > 4 else ''
+                    role = user[5] if len(user) > 5 else ''
                     session['logged_in'] = True
                     session['user_id'] = user_id
-                    session['username'] = user_name
-                    session['full_name'] = user_name
-                    session['role'] = role
+                    session['username'] = (user_name or '').strip()
+                    session['full_name'] = (full_name or user_name or '').strip()
+                    session['role'] = (role or 'student').strip().lower()
+                    session['email'] = email
                 elif isinstance(user, dict):
-                    # Dictionary format
                     session['logged_in'] = True
-                    session['user_id'] = user['id']
-                    session['username'] = user['username']
-                    session['full_name'] = user['full_name']
-                    session['role'] = user['role']
+                    session['user_id'] = user.get('id')
+                    session['username'] = (user.get('username') or '').strip()
+                    session['full_name'] = (user.get('full_name') or user.get('username', '')).strip()
+                    session['role'] = (user.get('role') or 'student').strip().lower()
+                    session['email'] = user.get('email', '')
                 
                 # Log successful login
                 if db:
@@ -460,72 +463,138 @@ def index():
 @app.route('/generate_plan', methods=['GET', 'POST'])
 @require_login
 def generate_plan():
-    if request.method == 'POST':
-        student_file = request.files.get('student_csv')
-        room_file = request.files.get('room_csv')
-        students_per_desk = int(request.form.get('students_per_desk', 1))
-        include_detained = request.form.get('include_detained', 'off') == 'on'
-        building = request.form.get('building', 'Main Building')
+    if request.method == 'GET':
+        # Get default settings for the form
+        default_settings = {
+            'students_per_desk': 1,
+            'include_detained': False,
+            'default_building': 'Main Building'
+        }
         
-        if not student_file or not room_file:
-            flash('Please upload both CSV files.')
+        return render_template('generate plan/generate_plan.html', 
+                             default_settings=default_settings)
+    
+    try:
+        # Handle file uploads
+        student_csv_file = request.files.get('student_csv')
+        room_csv_file = request.files.get('room_csv')
+        
+        if not student_csv_file or not room_csv_file:
+            flash('Please upload both student and room CSV files.', 'error')
             return redirect(url_for('generate_plan'))
         
-        # Save files to uploads folder
-        upload_folder = '../data/uploads'
-        os.makedirs(upload_folder, exist_ok=True)
+        # Get form data
+        students_per_desk = int(request.form.get('students_per_desk', 1))
+        include_detained = 'include_detained' in request.form
+        building = request.form.get('building', 'Main Building')
         
-        # Generate unique filename with timestamp
+        # Create uploads directory if it doesn't exist
+        uploads_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'uploads')
+        uploads_dir = os.path.abspath(uploads_dir)
+        os.makedirs(uploads_dir, exist_ok=True)
+        
+        # Save uploaded files
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        student_filename = f"students_{timestamp}_{student_file.filename}"
-        room_filename = f"rooms_{timestamp}_{room_file.filename}"
+        student_filename = f"students_{timestamp}.csv"
+        room_filename = f"rooms_{timestamp}.csv"
         
-        student_path = os.path.join(upload_folder, student_filename)
-        room_path = os.path.join(upload_folder, room_filename)
-        student_file.save(student_path)
-        room_file.save(room_path)
+        student_path = os.path.join(uploads_dir, student_filename)
+        room_path = os.path.join(uploads_dir, room_filename)
         
-        # Store file paths in session for PDF generation
+        student_csv_file.save(student_path)
+        room_csv_file.save(room_path)
+        
+        # Store paths in session for PDF generation
         session['last_student_file'] = student_path
         session['last_room_file'] = room_path
         session['last_students_per_desk'] = students_per_desk
         session['last_include_detained'] = include_detained
         session['last_building'] = building
-
-        # Import students into the database
-        if db and db.connection and db.connection.is_connected():
-            inserted = db.import_students_from_csv(student_path)
-            print(f"Imported {inserted} students from CSV into the database.")
         
+        print(f"Generating seating plan with {students_per_desk} students per desk, include_detained: {include_detained}")
+        
+        # Import here to avoid circular imports
         from backend.utils.seating import generate_seating_plan
-        seating_plan, unseated_students, error = generate_seating_plan(student_path, room_path, students_per_desk, include_detained)
+        
+        # Generate seating plan
+        result, unseated_students, error = generate_seating_plan(
+            student_path, room_path, students_per_desk, include_detained
+        )
         
         if error:
-            flash(error)
-            return redirect(url_for('generate_plan'))
+            flash(f'Error generating seating plan: {error}', 'error')
+            return render_template('generate plan/generate_plan.html', 
+                                 default_settings={'students_per_desk': students_per_desk, 
+                                                 'include_detained': include_detained, 
+                                                 'default_building': building})
         
-        # Log activity
-        if db and db.connection and db.connection.is_connected():
-            user_id = session.get('user_id')
-            student_count = sum(
-                sum(1 for seat in row if seat is not None)
-                for room in seating_plan
-                for row in room.get('seats', [])
+        if result is None or not result:
+            flash('Failed to generate seating plan', 'error')
+            return render_template('generate plan/generate_plan.html', 
+                                 default_settings={'students_per_desk': students_per_desk, 
+                                                 'include_detained': include_detained, 
+                                                 'default_building': building})
+        
+        # Unpack result - result is now a tuple (seating_plan, summary_stats)
+        if isinstance(result, tuple) and len(result) == 2:
+            seating_plan, summary_stats = result
+        else:
+            # Fallback for unexpected format
+            seating_plan = result if isinstance(result, list) else []
+            # Calculate summary stats manually as fallback
+            total_seated = 0
+            for room in seating_plan:
+                if isinstance(room, dict) and 'students_count' in room:
+                    total_seated += room['students_count']
+            
+            summary_stats = {
+                'total_students_available': 0,
+                'total_students_seated': total_seated,
+                'total_unseated': len(unseated_students) if unseated_students else 0,
+                'total_capacity': sum(room.get('capacity', 0) for room in seating_plan if isinstance(room, dict)),
+                'total_rooms': len([r for r in seating_plan if isinstance(r, dict) and r.get('students_count', 0) > 0]),
+                'overall_utilization': 0,
+                'branch_distribution': {},
+                'students_per_desk': students_per_desk,
+                'include_detained': include_detained
+            }
+        
+        # Store in session for PDF generation
+        session['seating_plan'] = seating_plan
+        session['summary_stats'] = summary_stats
+        session['unseated_students'] = unseated_students
+        session['generation_settings'] = {
+            'students_per_desk': students_per_desk,
+            'include_detained': include_detained
+        }
+        
+        # Log the generation
+        user_id = session.get('user_id')
+        if db and user_id:
+            db.log_activity(
+                user_id, 
+                'SEATING_PLAN_GENERATED', 
+                f'Generated seating plan with {summary_stats["total_students_seated"]} students in {summary_stats["total_rooms"]} rooms',
+                get_client_ip(),
+                get_user_agent()
             )
-            room_count = len(seating_plan)
-            db.log_activity(user_id, 'SEATING_PLAN_GENERATED', 
-                          f"Generated seating plan with {student_count} students in {room_count} rooms")
         
-        return render_template('seating plan/seating_plan.html', seating_plan=seating_plan, unseated_students=unseated_students, building=building)
-    
-    # Get default settings
-    default_settings = {}
-    if db and db.connection and db.connection.is_connected():
-        default_settings['students_per_desk'] = int(db.get_setting('students_per_desk', '1'))
-        default_settings['include_detained'] = db.get_setting('include_detained', 'false') == 'true'
-        default_settings['default_building'] = db.get_setting('default_building', 'Main Building')
-    
-    return render_template('generate plan/generate_plan.html', default_settings=default_settings)
+        flash(f'Seating plan generated successfully! {summary_stats["total_students_seated"]} students seated in {summary_stats["total_rooms"]} rooms.', 'success')
+        
+        return render_template('seating plan/seating_plan.html', 
+                             seating_plan=seating_plan,
+                             summary_stats=summary_stats,
+                             unseated_students=unseated_students)
+        
+    except Exception as e:
+        print(f"Error in generate_plan: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        flash(f'Error generating seating plan: {str(e)}', 'error')
+        return render_template('generate plan/generate_plan.html', 
+                             default_settings={'students_per_desk': 1, 
+                                             'include_detained': False, 
+                                             'default_building': 'Main Building'})
 
 @app.route('/download_pdf', methods=['GET', 'POST'])
 @require_login
@@ -554,27 +623,31 @@ def download_pdf():
     print(f"  Students per desk: {students_per_desk}")
     print(f"  Include detained: {include_detained}")
     
-    seating_plan, unseated_students, error = generate_seating_plan(
+    generated_result, unseated_students, error = generate_seating_plan(
         student_csv, room_csv, students_per_desk, include_detained
     )
-    
+
     if error:
         flash(f'Error generating seating plan: {error}')
         return redirect(url_for('generate_plan'))
-    
-    # Debug: Print seating plan structure
+
+    if isinstance(generated_result, tuple) and len(generated_result) == 2:
+        seating_plan, summary_stats = generated_result
+    else:
+        seating_plan = generated_result if isinstance(generated_result, list) else []
+        summary_stats = session.get('summary_stats', {})
+
     print(f"Generated seating plan with {len(seating_plan)} rooms:")
-    for i, room in enumerate(seating_plan):
-        print(f"  Room {i+1}: {room.get('room_number')} / {room.get('room_name')} - {room.get('students_count', 0)} students")
-    
+    for idx, room in enumerate(seating_plan):
+        if isinstance(room, dict):
+            print(f"  Room {idx + 1}: {room.get('room_number')} / {room.get('room_name')} - {room.get('students_count', 0)} students")
+
     try:
-        # Use absolute path for pdf_folder
         base_dir = os.path.abspath(os.path.dirname(__file__))
         pdf_folder = os.path.join(base_dir, '..', 'data', 'pdfs')
         pdf_folder = os.path.abspath(pdf_folder)
         os.makedirs(pdf_folder, exist_ok=True)
 
-        # Generate PDF with unique filename
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         pdf_filename = f"seating_plan_{timestamp}.pdf"
 
@@ -585,8 +658,8 @@ def download_pdf():
             user_id = session.get('user_id')
 
             # Count students and rooms
-            student_count = sum(room.get('students_count', 0) for room in seating_plan)
-            room_count = len(seating_plan)
+            student_count = sum(room.get('students_count', 0) for room in seating_plan if isinstance(room, dict))
+            room_count = len([room for room in seating_plan if isinstance(room, dict)])
 
             db.save_pdf_history(
                 user_id, pdf_filename, pdf_path, 
